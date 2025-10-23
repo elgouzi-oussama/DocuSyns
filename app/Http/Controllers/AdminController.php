@@ -9,8 +9,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+
 class AdminController extends Controller
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('auth'),
+            new Middleware('permission:user.show', only: ['show']),
+            new Middleware('permission:user.edit', only: ['edit', 'update']),
+        ];
+    }
 
     public function index()
     {
@@ -82,5 +93,15 @@ class AdminController extends Controller
         $user->update($validated);
 
         return back()->with('success', 'Profil mis à jour avec succès.');
+    }
+
+    public function permissions()
+    {
+        if (Gate::allows('isSuperAdmin')) {
+            $users = User::where('role', '!=', 'super_admin')->get();
+        } else {
+            $users = User::where('role', 'user')->get();
+        }
+        return view('admin.permissions.index', compact('users'));
     }
 }

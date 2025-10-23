@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="fr">
+@extends('user.layout')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détails de la Facture</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+@section('title', __('messages.invoice_details_title'))
+@section('page_title', __('messages.invoice_details_title'))
 
-<body>
+@section('content')
+
+<div>
     @if (session('success'))
     <div
         x-data="{ show: true }"
@@ -26,65 +23,66 @@
         </button>
     </div>
     @endif
+
     <div class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
         <div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-4xl">
             <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">
-                📄 Détails de la Facture
+                📄 {{ __('messages.invoice_details') }}
             </h1>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-gray-700">
 
                 <div>
-                    <p class="text-sm text-gray-500">Référence Commande</p>
+                    <p class="text-sm text-gray-500">{{ __('messages.reference_commande') }}</p>
                     <p class="font-medium">{{ $invoice->reference_commande }}</p>
                 </div>
 
                 <div>
-                    <p class="text-sm text-gray-500">Date Commande</p>
+                    <p class="text-sm text-gray-500">{{ __('messages.date_commande') }}</p>
                     <p class="font-medium">{{ \Carbon\Carbon::parse($invoice->date_commande)->format('d/m/Y') }}</p>
                 </div>
 
                 <div>
-                    <p class="text-sm text-gray-500">Nom Fournisseur</p>
+                    <p class="text-sm text-gray-500">{{ __('messages.nom_fournisseur') }}</p>
                     <p class="font-medium">{{ $invoice->nom_fournisseur }}</p>
                 </div>
 
                 <div>
-                    <p class="text-sm text-gray-500">Code Fournisseur</p>
+                    <p class="text-sm text-gray-500">{{ __('messages.code_fournisseur') }}</p>
                     <p class="font-medium">{{ $invoice->code_fournisseur ?? '-' }}</p>
                 </div>
 
                 <div class="md:col-span-2">
-                    <p class="text-sm text-gray-500">Commandé Par</p>
+                    <p class="text-sm text-gray-500">{{ __('messages.commande_par') }}</p>
                     <p class="font-medium whitespace-pre-line">{{ $invoice->commande_par }}</p>
                 </div>
 
                 <div class="md:col-span-2">
-                    <p class="text-sm text-gray-500">Commandé À</p>
+                    <p class="text-sm text-gray-500">{{ __('messages.commande_a') }}</p>
                     <p class="font-medium whitespace-pre-line">{{ $invoice->commande_a }}</p>
                 </div>
 
                 <div>
-                    <p class="text-sm text-gray-500">Montant HT (DH)</p>
+                    <p class="text-sm text-gray-500">{{ __('messages.montant_ht') }}</p>
                     <p class="font-medium">{{ number_format($invoice->montant_ht, 2, ',', ' ') }}</p>
                 </div>
 
                 <div>
-                    <p class="text-sm text-gray-500">Montant TVA (DH)</p>
+                    <p class="text-sm text-gray-500">{{ __('messages.montant_tva') }}</p>
                     <p class="font-medium">{{ number_format($invoice->montant_tva, 2, ',', ' ') }}</p>
                 </div>
 
                 <div>
-                    <p class="text-sm text-gray-500">Montant TTC (DH)</p>
+                    <p class="text-sm text-gray-500">{{ __('messages.montant_ttc') }}</p>
                     <p class="font-medium">{{ number_format($invoice->montant_ttc, 2, ',', ' ') }}</p>
                 </div>
 
                 @if ($invoice->file)
                 <div class="md:col-span-2">
-                    <p class="text-sm text-gray-500 mb-1">Fichier associé</p>
+                    <p class="text-sm text-gray-500 mb-1">{{ __('messages.fichier_associe') }}</p>
                     <a href="{{ asset('storage/' . $invoice->file) }}" target="_blank"
                         class="text-blue-600 hover:underline">
-                        📎 Voir le fichier
+                        📎 {{ __('messages.view_file') }}
                     </a>
                 </div>
                 @endif
@@ -94,17 +92,17 @@
             <div class="pt-6 flex justify-between">
                 <a href="{{ route('invoice.index') }}"
                     class="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
-                    Retour
+                    {{ __('messages.back') }}
                 </a>
-
+                @can('invoice.edit')
                 <a href="{{ route('invoice.edit', $invoice->id) }}"
                     class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                    Modifier
+                    {{ __('messages.edit') }}
                 </a>
+                @endcan
             </div>
         </div>
     </div>
+</div>
 
-</body>
-
-</html>
+@endsection

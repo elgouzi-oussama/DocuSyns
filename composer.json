@@ -11,10 +11,13 @@
     "require": {
         "php": "^8.2",
         "break-down/pdf-to-image": "^0.0.5",
+        "faisal50x/blade-ionicons": "^1.1",
         "google/cloud-document-ai": "^2.4",
+        "khatabwedaa/blade-css-icons": "^1.5",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "smalot/pdfparser": "^2.12",
+        "spatie/laravel-permission": "^6.21",
         "spatie/pdf-to-image": "^3.1",
         "thiagoalessio/tesseract_ocr": "^2.13"
     },

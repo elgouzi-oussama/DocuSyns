@@ -1,0 +1,27 @@
+<?php
+return [
+    'login_title' => 'تسجيل الدخول',
+    'welcome' => 'مرحباً بك',
+    'login_message' => 'قم بتسجيل الدخول إلى حسابك',
+    'email' => 'البريد الإلكتروني',
+    'password' => 'كلمة المرور',
+    'forgot_password' => 'هل نسيت كلمة المرور؟',
+    'remember_me' => 'تذكرني',
+    'login_button' => 'تسجيل الدخول',
+    'errors' => [
+        'email_required' => 'البريد الإلكتروني مطلوب.',
+        'email_invalid' => 'الرجاء إدخال بريد إلكتروني صالح.',
+        'password_required' => 'كلمة المرور مطلوبة.',
+        'password_min' => 'يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل.',
+        'invalid_login' => 'بيانات الدخول غير صحيحة.',
+        'access_denied' => 'تم الرفض. هذا الوصول مخصص للمستخدمين فقط.',
+    ],
+    'title' => 'تسجيل دخول المسؤول',
+    'panel_title' => 'تسجيل دخول المسؤول',
+    'subtitle' => 'تسجيل الدخول إلى منطقة الإدارة الخاصة بك',
+    'email_label' => 'البريد الإلكتروني',
+    'email_placeholder' => 'admin@example.com',
+    'password_label' => 'كلمة المرور',
+    'password_placeholder' => '••••••••',
+    'footer' => 'لوحة تحكم المسؤول',
+];

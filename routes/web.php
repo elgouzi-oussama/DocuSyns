@@ -1,117 +1,168 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminInvoiceController;
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\AdminUtilisateurController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\RapportController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\LocaleController;
+
+Route::middleware('locale')->group(function () {
+    // Language switcher route
+    Route::get('/set-locale/{locale}', [LocaleController::class, 'setLocale'])->name('set-locale');
+
+    Route::get('/', function () {
+        return view('user.index');
+    })->name('index')->middleware(['check.user.or.guest']);
+    // Other public routes
+
+    Route::get('/rapports', [RapportController::class, 'index'])->name('user.rapports.index');
+    Route::get('/contact', [ContactController::class, 'index'])->name('user.contact.index');
+    Route::post('/contact', [ContactController::class, 'send'])->name('user.contact.send');
+
+
+    //  **       Sign
+    Route::middleware(['guest', 'check.user.or.guest'])->controller(AuthController::class)->group(function () {
+
+        // ----------- Sign In -----------
+        Route::get('/signin', 'index')->name('signin');
+        Route::post('/signin', 'auth')->name('login');
+    });
+
+    // ----------- Logout (for logged-in users only) -----------
+    Route::middleware(['auth', 'role:user'])->get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+    // === Profile Section (protected) === Admin role
+    Route::prefix('profile')
+        ->controller(UserController::class)
+        ->middleware(['auth', 'role:user'])
+        ->group(function () {
+            Route::get('/edit',  'edit')->name('profile.edit')->middleware('permission:profile.edit');
+            Route::put('/',  'update')->name('profile.update')->middleware('permission:profile.edit');
+            Route::get('/',  'show')->name('profile.show')->middleware('permission:profile.show');
+        });
+
+    // === Invoice Routes (protected) === USER ROLE
+    Route::middleware(['auth', 'role:user'])
+        ->prefix('invoices')
+        ->controller(InvoiceController::class)
+        ->group(function () {
+
+            // 🧾 List all invoices
+            Route::get('/', 'index')->name('invoice.index')->middleware('permission:invoice.index');
+
+            // 👁️ Show one invoice
+            Route::get('/show/{id}', 'show')->name('invoice.show')->middleware('permission:invoice.show');
+
+
+            // ➕ Create new invoice (form)
+            Route::get('/create', 'create')->name('invoice.create')->middleware('permission:invoice.create');
+
+            // 📤 Upload + OCR parse
+            Route::post('/store', 'store')->name('invoice.store')->middleware('permission:invoice.create');
+
+            // 💾 Confirm & save to database
+            Route::post('/confirm', 'confirm')->name('invoice.confirm')->middleware('permission:invoice.create');
+
+            // ✏️ Edit existing invoice
+            Route::get('/edit/{id}', 'edit')->name('invoice.edit')->middleware('permission:invoice.edit');
+
+            // 🔄 Update existing invoice
+            Route::put('/update/{id}', 'update')->name('invoice.update')->middleware('permission:invoice.edit');
+            Route::delete('/{invoice}',  'destroy')->name('invoice.destroy')->middleware('permission:invoice.delete');
+        });
 
 
 
-Route::get('/', function () {
-    return view('index');
-})->name('index')->middleware(['check.user.or.guest']);
+    // === Admin Section (protected) === and 'admin' role
+    Route::prefix('admin')
+        ->name('admin.')
+        ->middleware('role:admin')
+        ->group(function () {
+
+            Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+            // Invoice routes 
+            Route::resource('invoices', AdminInvoiceController::class);
+            Route::post('/invoices/confirm', [AdminInvoiceController::class, 'confirm'])->name('invoices.confirm');
+            Route::post('/invoices/{invoice}', [AdminInvoiceController::class, 'show'])->name('invoices.show');
 
 
-//  **       Sign
-Route::middleware(['guest', 'check.user.or.guest'])->controller(AuthController::class)->group(function () {
+            // Extra routes for approve / reject
+            Route::post('/invoices/{id}/approve', [AdminInvoiceController::class, 'approve'])->name('invoices.approve');
+            Route::post('/invoices/{id}/reject', [AdminInvoiceController::class, 'reject'])->name('invoices.reject');
 
-    // ----------- Sign In -----------
-    Route::get('/signin', 'indexin')->name('signin');
-    Route::post('/signin', 'auth')->name('login');
-});
+            // utilisateur routes
+            Route::get('/users/permissions', [AdminController::class, 'permissions'])->name('users.permissions.index');
+            Route::put('/users/permissions/{user}', [AdminUtilisateurController::class, 'permissions'])->name('users.permissions');
 
-// ----------- Logout (for logged-in users only) -----------
-Route::middleware(['auth', 'role:user'])->get('/logout', [AuthController::class, 'logout'])->name('logout');
-
+            Route::resource('/users', AdminUtilisateurController::class);
 
 
+            // profile routes
+            Route::get('/profile/edit', [AdminController::class, 'edit'])->name('profile.edit');
+            Route::put('/profile', [AdminController::class, 'update'])->name('profile.update');
+            Route::get('/profile', [AdminController::class, 'show'])->name('profile.show');
+        });
 
 
-Route::middleware(['auth', 'role:user'])
-    ->prefix('features')
-    ->controller(InvoiceController::class)
-    ->group(function () {
-
-        // 🧾 List all invoices
-        Route::get('/', 'index')->name('invoice.index');
-
-        // 👁️ Show one invoice
-        Route::get('/show/{id}', 'show')->name('invoice.show');
 
 
-        // ➕ Create new invoice (form)
-        Route::get('/create', 'create')->name('invoice.create');
+    // // Super Admin routes (protected) and 'super_admin' role
+    Route::middleware('role:super_admin')->prefix('super-admin')->name('super_admin.')->group(function () {
+        Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+        // Invoice routes
+        Route::resource('invoices', AdminInvoiceController::class);
+        Route::post('/invoices/confirm', [AdminInvoiceController::class, 'confirm'])->name('invoices.confirm');
+        Route::post('/invoices/{invoice}', [AdminInvoiceController::class, 'show'])->name('invoices.show');
 
-        // 📤 Upload + OCR parse
-        Route::post('/store', 'store')->name('invoice.store');
+        // Extra routes for approve / reject
+        Route::post('/invoices/{id}/approve', [AdminInvoiceController::class, 'approve'])->name('invoices.approve');
+        Route::post('/invoices/{id}/reject', [AdminInvoiceController::class, 'reject'])->name('invoices.reject');
 
-        // 💾 Confirm & save to database
-        Route::post('/confirm', 'confirm')->name('invoice.confirm');
+        // utilisateur routes
+        Route::get('/users/permissions', [AdminController::class, 'permissions'])->name('users.permissions.index');
+        Route::put('/users/permissions/{user}', [AdminUtilisateurController::class, 'permissions'])->name('users.permissions');
+        Route::resource('/users', AdminUtilisateurController::class);
 
-        // ✏️ Edit existing invoice
-        Route::get('/edit/{id}', 'edit')->name('invoice.edit');
 
-        // 🔄 Update existing invoice
-        Route::put('/update/{id}', 'update')->name('invoice.update');
-        Route::delete('/{invoice}',  'destroy')->name('invoice.destroy');
+        // profile routes
+        Route::get('/profile/edit', [AdminController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [AdminController::class, 'update'])->name('profile.update');
+        Route::get('/profile', [AdminController::class, 'show'])->name('profile.show');
     });
 
 
+    // Admin Authentication Routes (grouped by controller + middleware)
+    Route::controller(AdminAuthController::class)
+        ->group(function () {
 
-// === Admin Section (protected) ===
-Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+            // Guest-only (login)
+            Route::middleware('guest')->group(function () {
+                Route::get('/adminqwer/login', 'showLoginForm')->name('admin.login');
+                Route::post('/adminqwer/login', 'login')->name('admin.login.post');
+            });
 
-    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
-    // Invoice routes 
-    Route::resource('invoices', AdminInvoiceController::class);
-    Route::post('/invoices/confirm', [AdminInvoiceController::class, 'confirm'])->name('invoices.confirm');
-    Route::post('/invoices/{invoice}', [AdminInvoiceController::class, 'show'])->name('invoices.show');
+            // Authenticated (logout, password reset)
+            Route::middleware('auth')->group(function () {
+                Route::post('/adminqwer/logout', 'logout')->name('admin.logout');
+                Route::get('/adminqwer/password/reset', 'showLinkRequestForm')->name('admin.password.request');
+                Route::post('/adminqwer/password/reset', 'update')->name('admin.password.update');
+            });
+        });
 
-
-    // Extra routes for approve / reject
-    Route::post('/invoices/{id}/approve', [AdminInvoiceController::class, 'approve'])->name('invoices.approve');
-    Route::post('/invoices/{id}/reject', [AdminInvoiceController::class, 'reject'])->name('invoices.reject');
-
-    // utilisateur routes
-    Route::resource('/users', AdminUtilisateurController::class)->only(['index', 'show']);
+    // Clear cache route
+    Route::get('/clear-cache', function () {
+        Artisan::call('cache:clear');
+        Artisan::call('config:clear');
+        Artisan::call('config:cache');
+        Artisan::call('view:clear');
+        return "Cache is cleared";
+    });
 });
-
-
-
-
-// // Super Admin routes
-Route::middleware('role:super_admin')->prefix('super-admin')->name('super_admin.')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
-    // Invoice routes
-    Route::resource('invoices', AdminInvoiceController::class);
-    Route::post('/invoices/confirm', [AdminInvoiceController::class, 'confirm'])->name('invoices.confirm');
-    Route::post('/invoices/{invoice}', [AdminInvoiceController::class, 'show'])->name('invoices.show');
-
-    // Extra routes for approve / reject
-    Route::post('/invoices/{id}/approve', [AdminInvoiceController::class, 'approve'])->name('invoices.approve');
-    Route::post('/invoices/{id}/reject', [AdminInvoiceController::class, 'reject'])->name('invoices.reject');
-
-    // utilisateur routes
-    Route::resource('/users', AdminUtilisateurController::class);
-
-
-    // profile routes
-    Route::get('/profile/edit', [AdminController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [AdminController::class, 'update'])->name('profile.update');
-    Route::get('/profile', [AdminController::class, 'show'])->name('profile.show');
-});
-
-
-
-Route::get('/adminqwer/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login')->middleware('guest');
-Route::post('/adminqwer/login', [AdminAuthController::class, 'login'])->name('admin.login.post')->middleware('guest');
-// Route::get('/adminqwer/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-Route::post('/adminqwer/logout', [AdminAuthController::class, 'logout'])->name('admin.logout')->middleware('auth');
-
-Route::get('/adminqwer/password/reset', [AdminAuthController::class, 'showLinkRequestForm'])
-    ->name('admin.password.request')->middleware('auth');
-Route::post('/adminqwer/password/reset', [AdminAuthController::class, 'update'])
-    ->name('admin.password.update')->middleware('auth');

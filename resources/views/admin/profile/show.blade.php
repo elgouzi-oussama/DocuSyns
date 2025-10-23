@@ -1,7 +1,7 @@
 @extends('admin.layout')
 
-@section('title', 'Profil Administrateur')
-@section('page_title', 'Mon Profil')
+@section('title', __('admin.profile.title'))
+@section('page_title', __('admin.profile.page_title'))
 
 @section('content')
 @if (session('success'))
@@ -12,21 +12,30 @@
 
 <div class="bg-white p-6 rounded-lg shadow-sm max-w-lg mx-auto">
     <div class="mb-6">
-        <h2 class="text-xl font-semibold mb-2">Informations du compte</h2>
-        <p><strong>Nom :</strong> {{ $admin->name }}</p>
-        <p><strong>Email :</strong> {{ $admin->email }}</p>
-        <p><strong>Rôle :</strong> {{ ucfirst($admin->role) }}</p>
-        <p><strong>Date de création :</strong> {{ $admin->created_at->format('d/m/Y H:i') }}</p>
-        <p><strong>Dernière mise à jour :</strong> {{ $admin->updated_at->format('d/m/Y H:i') }}</p>
+        <h2 class="text-xl font-semibold mb-2">{{ __('admin.profile.account_info') }}</h2>
+        <p><strong>{{ __('admin.profile.name') }} :</strong> {{ $admin->name }}</p>
+        <p><strong>{{ __('admin.profile.email') }} :</strong> {{ $admin->email }}</p>
+        <p><strong>{{ __('admin.profile.role') }} :</strong> {{ ucfirst($admin->role) }}</p>
+        <p><strong>{{ __('admin.profile.created_at') }} :</strong> {{ $admin->created_at->format('d/m/Y H:i') }}</p>
+        <p><strong>{{ __('admin.profile.updated_at') }} :</strong> {{ $admin->updated_at->format('d/m/Y H:i') }}</p>
     </div>
 
     <div class="flex justify-between">
         <a href="{{ route('super_admin.dashboard') }}" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">
-            Retour
+            {{ __('admin.profile.back') }}
         </a>
+
+        @can('isSuperAdmin')
         <a href="{{ route('super_admin.profile.edit') }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            Modifier le profil
+            {{ __('admin.profile.edit') }}
         </a>
+        @endcan
+
+        @can('profile.edit')
+        <a href="{{ route('super_admin.profile.edit') }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            {{ __('admin.profile.edit') }}
+        </a>
+        @endcan
     </div>
 </div>
 @endsection

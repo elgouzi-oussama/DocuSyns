@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
 
     // ********************** index login
-    public function indexin()
+    public function index()
     {
-        return view('login.signin');
+        return view('user.login.signin');
     }
 
 
@@ -20,55 +21,43 @@ class AuthController extends Controller
     // ***********      auth login
     public function auth(Request $request)
     {
+        // 🧠 Validation avec messages multilingues automatiques
         $formFields = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:8'
+            'password' => 'required|min:8',
+        ], [
+            'email.required' => __('auth.errors.email_required'),
+            'email.email' => __('auth.errors.email_invalid'),
+            'password.required' => __('auth.errors.password_required'),
+            'password.min' => __('auth.errors.password_min'),
         ]);
-        $remember = $request->filled('remember'); // check if "remember me" is checked
+
+        $remember = $request->filled('remember');
 
         if (Auth::attempt($formFields, $remember)) {
+
             if (Auth::user()->role === 'user') {
+
+                if ($request->has('remember')) {
+                    Cookie::queue('email', $request->email, 60 * 24 * 30);
+                    Cookie::queue('password', $request->password, 60 * 24 * 30);
+                } else {
+                    Cookie::queue(Cookie::forget('email'));
+                    Cookie::queue(Cookie::forget('password'));
+                }
+
                 $request->session()->regenerate();
                 return to_route('index');
-            } else {
-                Auth::logout();
-                return back()->withErrors(['email' => 'Access denied. Users only.']);
             }
+
+            Auth::logout();
+            return back()->withErrors(['email' => __('auth.errors.access_denied')]);
         }
+
         return back()->withErrors([
-            'email' => 'Invalid login or password',
+            'email' => __('auth.errors.invalid_login'),
         ]);
     }
-
-
-
-
-    // *************     show sign up 
-    public function create()
-    {
-        return view('login.signup');
-    }
-
-
-    // ********** create account
-    public function store(Request $request)
-    {
-        $name = $request->firstName . " " . $request->lastName;
-        User::create([
-            'name' => $name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-
-        return view('login.signin');
-    }
-
-
-
-
-
-
-
     // ****************** logout
     public function logout()
     {

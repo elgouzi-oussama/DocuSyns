@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckPermission;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,9 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'internal.only' => \App\Http\Middleware\InternalOnly::class,
+            'permission' => CheckPermission::class,
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'check.user.or.guest' => \App\Http\Middleware\CheckUserOrGuest::class,
+            'locale' => \App\Http\Middleware\SetLocale::class,
+
 
         ]);
     })

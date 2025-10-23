@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use thiagoalessio\TesseractOCR\TesseractOCR;
 use Smalot\PdfParser\Parser;
 
@@ -12,26 +13,28 @@ use Smalot\PdfParser\Parser;
 
 class InvoiceController extends Controller
 {
+
     public function index()
     {
         $invoices = Invoice::latest()->where('user_id', Auth::id())->distinct()->get();
-        // dd($invoice) ;   
-        return view('invoice.index', compact('invoices'));
+        return view('user.invoice.index', compact('invoices'));
     }
+
     public function show($id)
     {
         $invoice = Invoice::findOrFail($id);
-        return view('invoice.show', compact('invoice'));
+        return view('user.invoice.show', compact('invoice'));
     }
 
     public function create()
     {
-        return view('invoice.create');
+        return view('user.invoice.create');
     }
+
     public function edit($id)
     {
         $invoice = Invoice::findOrFail($id);
-        return view('invoice.edit', compact('invoice'));
+        return view('user.invoice.edit', compact('invoice'));
     }
 
     // 🟩 Update — Save the modified data
@@ -39,7 +42,6 @@ class InvoiceController extends Controller
     {
         $invoice = Invoice::findOrFail($id);
 
-        // Optional: validate fields
         $request->validate([
             'reference_commande' => 'required|string|max:100',
             'date_commande'      => 'required|date',
@@ -50,12 +52,13 @@ class InvoiceController extends Controller
             'montant_ht'         => 'required|string',
             'montant_tva'        => 'required|string',
             'montant_ttc'        => 'required|string',
+        ], [
+            'reference_commande.required' => __('invoice.validation.reference_commande_required'),
+            'date_commande.required'      => __('invoice.validation.date_commande_required'),
+            'nom_fournisseur.required'    => __('invoice.validation.nom_fournisseur_required'),
         ]);
 
-        // Convert amounts like "810 330,00" → "810330.00"
-        $normalize = function ($value) {
-            return floatval(str_replace([' ', ','], ['', '.'], $value));
-        };
+        $normalize = fn($v) => floatval(str_replace([' ', ','], ['', '.'], $v));
 
         $invoice->update([
             'reference_commande' => $request->reference_commande,
@@ -70,52 +73,78 @@ class InvoiceController extends Controller
             'user_id'            => Auth::id(),
         ]);
 
-        // Redirect with success message
         return redirect()
             ->route('invoice.index')
-            ->with('success', 'Facture mise à jour avec succès !');
+            ->with('success', __('invoice.messages.updated'));
     }
-
 
     public function store(Request $request)
     {
-        // Validate the uploaded file
-        $validated = $request->validate([
+        $request->validate([
             'file' => 'required|file|mimes:jpg,jpeg,png,bmp,tiff,pdf|max:5120'
+        ], [
+            'file.required' => __('invoice.validation.file_required'),
+            'file.mimes'    => __('invoice.validation.file_mimes'),
+            'file.max'      => __('invoice.validation.file_max'),
         ]);
 
-        // Store the uploaded file
         $file = $request->file('file');
         $relativePath = $file->store('invoice', 'public');
         $originalPath = storage_path('app/public/' . $relativePath);
 
-
-        // Handle PDF conversion to image
         if ($file->getClientOriginalExtension() === 'pdf') {
             $parser = new Parser();
             $pdf = $parser->parseFile($originalPath);
             $text = $pdf->getText();
-            // dd($text);
         } else {
-            // orc 
             $ocr = (new TesseractOCR($originalPath))
                 ->executable(config('services.tesseract.path'))
                 ->lang(config('services.tesseract.langs'));
-
             $text = $ocr->run();
         }
 
-        // Extract all data at once
         $allData = $this->parseAll($text);
         $allData['file'] = $relativePath;
-        // dd($allData);
+
         if (Invoice::where('reference_commande', $allData['reference_commande'])->exists()) {
-            return  redirect()->route('invoice.create')->with('error', 'Cette référence de commande existe déjà.');
+            return redirect()->route('invoice.create')->with('error', __('invoice.errors.duplicate_reference'));
         }
 
+        return view('user.invoice.see', compact('allData'));
+    }
 
+    public function confirm(Request $request)
+    {
+        $data = $request->except('_token');
+        $data['user_id'] = Auth::id();
 
-        return view('invoice.see', compact('allData'));
+        $normalize = fn($v) => isset($v) ? floatval(str_replace([' ', ','], ['', '.'], $v)) : null;
+        $data['montant_ht'] = $normalize($data['montant_ht'] ?? null);
+        $data['montant_tva'] = $normalize($data['montant_tva'] ?? null);
+        $data['montant_ttc'] = $normalize($data['montant_ttc'] ?? null);
+
+        if (Invoice::where('reference_commande', $data['reference_commande'])->exists()) {
+            return redirect()->route('invoice.create')->with('error', __('invoice.errors.duplicate_reference'));
+        }
+
+        $invoice = Invoice::create($data);
+        $id = $invoice->id;
+
+        $successMessage = __('invoice.messages.created');
+
+        if (Gate::allows('invoice.show')) {
+            return redirect()->route('invoice.show', compact('id'))->with('success', $successMessage);
+        }
+
+        return redirect()->route('invoice.index')->with('success', $successMessage);
+    }
+
+    public function destroy(Invoice $invoice)
+    {
+        $invoice->delete();
+        return redirect()
+            ->route('invoice.index')
+            ->with('success', __('invoice.messages.deleted'));
     }
 
 
@@ -378,50 +407,5 @@ class InvoiceController extends Controller
             'montant_tva' => $this->extractMontantTva($text),
             'montant_ttc' => $this->extractMontantTtc($text),
         ];
-    }
-
-
-
-    public function confirm(Request $request)
-    {
-        $data = $request->except('_token');
-        $data['user_id'] = Auth::id();
-
-        if (isset($data['montant_ht'])) {
-            $data['montant_ht']  = $this->normalizeAmount($data['montant_ht']);
-        }
-
-        if (isset($data['montant_tva'])) {
-            $data['montant_tva'] = $this->normalizeAmount($data['montant_tva']);
-        }
-
-        if (isset($data['montant_ttc'])) {
-            $data['montant_ttc'] = $this->normalizeAmount($data['montant_ttc']);
-        }
-
-
-
-        // dd($data);
-
-
-        // ✅ Check if reference already exists
-        if (Invoice::where('reference_commande', $data['reference_commande'])->exists()) {
-            return redirect()->route('invoice.create')->with('error', 'Cette référence de commande existe déjà.');
-        }
-
-        $invoice = Invoice::create($data);
-        $id = $invoice['id'];
-
-        return redirect()->route('invoice.show', compact('id'))->with('success', 'Commande enregistrée avec succès !');
-    }
-
-    // ✅ Delete invoice
-    public function destroy(Invoice $invoice)
-    {
-        $invoice->delete();
-
-        return redirect()
-            ->route('invoice.index')
-            ->with('success', 'Facture supprimée avec succès !');
     }
 }

@@ -11,6 +11,30 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    public function hasPermission($permission)
+    {
+        // Remove json_decode() - permissions is already an array
+        $permissions = $this->permissions ?? [];
+
+        return in_array($permission, $permissions);
+    }
+
+    public function givePermission($permission)
+    {
+        $permissions = $this->permissions ?? [];
+        if (!in_array($permission, $permissions)) {
+            $permissions[] = $permission;
+            $this->permissions = $permissions;
+            $this->save();
+        }
+    }
+
+    public function revokePermission($permission)
+    {
+        $permissions = $this->permissions ?? [];
+        $this->permissions = array_values(array_diff($permissions, [$permission]));
+        $this->save();
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +46,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'permissions',
     ];
 
 
@@ -40,13 +65,28 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'permissions' => 'array', // IMPORTANT!
+    ];
+
+
+    protected static function booted()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        static::creating(function ($user) {
+            if (empty($user->permissions)) {
+                $user->permissions = [
+                    "invoice.show",
+                    "invoice.index",
+                    "invoice.create",
+                    "invoice.store",
+                    "invoice.confirm",
+                ];
+            }
+        });
     }
+
     public function invoices()
     {
         return $this->hasMany(Invoice::class);

@@ -10,9 +10,25 @@ use Illuminate\Support\Facades\Auth;
 use Smalot\PdfParser\Parser;
 use thiagoalessio\TesseractOCR\TesseractOCR;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class AdminInvoiceController extends Controller
+class AdminInvoiceController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('auth'),
+            new Middleware('permission:invoice.index', only: ['index']),
+            new Middleware('permission:invoice.show', only: ['show']),
+            new Middleware('permission:invoice.create', only: ['create', 'store', 'confirm']),
+            new Middleware('permission:invoice.edit', only: ['edit', 'update']),
+            new Middleware('permission:invoice.delete', only: ['destroy']),
+            new Middleware('permission:invoice.approve', only: ['approve']),
+            new Middleware('permission:invoice.reject', only: ['reject']),
+        ];
+    }
+
     /**
      * Display a listing of all invoices (admin only)
      */

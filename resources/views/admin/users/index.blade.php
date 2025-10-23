@@ -1,7 +1,7 @@
 @extends('admin.layout')
 
-@section('title', 'Liste des utilisateurs')
-@section('page_title', 'Gestion des utilisateurs')
+@section('title', __('user.list.title'))
+@section('page_title', __('user.list.page_title'))
 
 @section('content')
 <div class="bg-white p-6 rounded-lg shadow-sm">
@@ -12,11 +12,34 @@
     </div>
     @endif
 
+    @can('isSuperAdmin')
+    <div class="mb-4">
+        <a href="{{ route('super_admin.users.permissions.index') }}" class="text-blue-600 hover:underline rounded bg-blue-50 p-2 text-lg">
+            {{ __('user.list.manage_permissions') }}
+        </a>
+    </div>
+    @endcan
+
+    @can('permission.show')
+    <div class="mb-4">
+        <a href="{{ route('admin.users.permissions.index') }}" class="text-blue-600 hover:underline rounded bg-blue-50 p-2 text-lg">
+            {{ __('user.list.manage_permissions') }}
+        </a>
+    </div>
+    @endcan
+
     <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold text-gray-700">Liste des utilisateurs</h2>
+        <h2 class="text-xl font-semibold text-gray-700">{{ __('user.list.title_table') }}</h2>
+
         @can('isSuperAdmin')
         <a href="{{ route('super_admin.users.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            + Ajouter un utilisateur
+            + {{ __('user.list.add_user') }}
+        </a>
+        @endcan
+
+        @can('user.create')
+        <a href="{{ route('admin.users.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            + {{ __('user.list.add_user') }}
         </a>
         @endcan
     </div>
@@ -25,10 +48,10 @@
         <thead class="bg-gray-100">
             <tr>
                 <th class="px-4 py-2 border-b">#</th>
-                <th class="px-4 py-2 border-b">Nom</th>
-                <th class="px-4 py-2 border-b">Email</th>
-                <th class="px-4 py-2 border-b">Rôle</th>
-                <th class="px-4 py-2 border-b text-center">Actions</th>
+                <th class="px-4 py-2 border-b">{{ __('user.list.name') }}</th>
+                <th class="px-4 py-2 border-b">{{ __('user.list.email') }}</th>
+                <th class="px-4 py-2 border-b">{{ __('user.list.role') }}</th>
+                <th class="px-4 py-2 border-b text-center">{{ __('user.list.actions') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -40,23 +63,37 @@
                 <td class="px-4 py-2 border-b">{{ ucfirst($user->role ?? 'user') }}</td>
                 <td class="px-4 py-2 border-b text-center space-x-2">
                     @can('isSuperAdmin')
-                    <a href="{{ route('super_admin.users.edit', $user) }}" class="text-yellow-600 hover:underline">Modifier</a>
-                    <form action="{{ route('super_admin.users.destroy', $user) }}" method="POST" class="inline"
-                        onsubmit="if(confirm('Supprimer cet utilisateur ?')){return confirm('Si cet utilisateur a créé des factures, elles seront aussi supprimées.\nÊtes-vous sûr de vouloir continuer ?');}else{return false;}">
+                    <a href="{{ route('super_admin.users.edit', $user) }}" class="text-yellow-600 mx-2 hover:underline">{{ __('user.list.edit') }}</a>
 
+                    <form action="{{ route('super_admin.users.destroy', $user) }}" method="POST" class=" inline"
+                        onsubmit="return confirm('{{ __('user.list.delete_confirm') }}');">
                         @csrf @method('DELETE')
-                        <button class="text-red-600 hover:underline">Supprimer</button>
+                        <button class="text-red-600 hover:underline">{{ __('user.list.delete') }}</button>
                     </form>
-                    <a href="{{ route('super_admin.users.show', $user) }}" class="text-blue-600 hover:underline">Voir</a>
+
+                    <a href="{{ route('super_admin.users.show', $user) }}" class="text-blue-600 hover:underline">{{ __('user.list.show') }}</a>
                     @endcan
-                    @cannot('isSuperAdmin')
-                    <a href="{{ route('admin.users.show', $user) }}" class="text-blue-600 hover:underline">Voir</a>
-                    @endcannot
+
+                    @can('user.edit')
+                    <a href="{{ route('admin.users.edit', $user) }}" class="text-yellow-600 hover:underline">{{ __('user.list.edit') }}</a>
+                    @endcan
+
+                    @can('user.delete')
+                    <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline"
+                        onsubmit="return confirm('{{ __('user.list.delete_confirm') }}');">
+                        @csrf @method('DELETE')
+                        <button class="text-red-600 hover:underline">{{ __('user.list.delete') }}</button>
+                    </form>
+                    @endcan
+
+                    @can('user.show' , $user)
+                    <a href="{{ route('admin.users.show', $user) }}" class="text-blue-600 hover:underline">{{ __('user.list.show') }}</a>
+                    @endcan
                 </td>
             </tr>
             @empty
             <tr>
-                <td colspan="5" class="px-4 py-3 text-center text-gray-500">Aucun utilisateur trouvé.</td>
+                <td colspan="5" class="px-4 py-3 text-center text-gray-500">{{ __('user.list.no_users') }}</td>
             </tr>
             @endforelse
         </tbody>
