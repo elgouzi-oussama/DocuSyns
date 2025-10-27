@@ -2,9 +2,13 @@
 
 namespace App\Providers;
 
+use App\Helpers\SystemHelper;
+use App\Models\License;
+use App\Models\LicensesType;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\Models\User;
+use Carbon\Carbon;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -12,7 +16,9 @@ class AuthServiceProvider extends ServiceProvider
      * Register any authentication / authorization services.
      */
     public function boot(): void
+
     {
+
         // ✅ Super Admin Gate
         Gate::define('isSuperAdmin', function (User $user) {
             return $user->role === 'super_admin';
@@ -84,5 +90,81 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('invoice.delete', function (User $authUser, ?User $target = null) {
             return $authUser->hasPermission('invoice.delete');
         });
+
+
+
+
+
+
+        // Define license gates
+        Gate::define('isPro', function ($user = null) {
+            return $this->hasLicenseType('Pro');
+        });
+
+        Gate::define('isBasic', function ($user = null) {
+            return $this->hasLicenseType('Basic');
+        });
+
+        Gate::define('isEnterprise', function ($user = null) {
+            return $this->hasLicenseType('Enterprise');
+        });
+
+        Gate::define('isTrial', function ($user = null) {
+            $license = License::first();
+            if (!$license || $license->akaeay_ !== null) {
+                return false;
+            }
+
+            $trialStartDate = Carbon::parse($license->auasae_);
+            $daysUsed = $trialStartDate->diffInDays(Carbon::now());
+
+            return $daysUsed < 30;
+        });
+        Gate::define('isTrialEnded', function ($user = null) {
+            $license = License::first();
+
+            if (!$license || $license->akaeay_ !== null) {
+                return false;
+            }
+
+            $trialStartDate = Carbon::parse($license->auasae_);
+            $daysUsed = $trialStartDate->diffInDays(Carbon::now());
+
+            // ✅ Trial has expired
+            return $daysUsed >= 30;
+        });
+        // 🧩 Define fallback check — if not any license active
+        Gate::define('noLicense', function ($user = null) {
+            return !(
+                Gate::check('isPro') ||
+                Gate::check('isBasic') ||
+                Gate::check('isEnterprise') ||
+                Gate::check('isTrial')
+            );
+        });
+        Gate::define('isLicense', function () {
+            if (Gate::check('isPro')) {
+                return true;
+            } elseif (Gate::check('isBasic')) {
+                return true;
+            } elseif (Gate::check('isEnterprise')) {
+                return true;
+            }
+        });
+    }
+
+
+    private function hasLicenseType(string $typeName): bool
+    {
+        $serverId = SystemHelper::getServerId();
+        $license = License::where('server_id', $serverId)->first();
+
+        if (!$license || $license->akaeay_ === null) {
+            return false;
+        }
+
+        $licenseType = LicensesType::where('_name', $typeName)->first();
+
+        return $licenseType && $license->akaeay_ === $licenseType->akaeay_;
     }
 }

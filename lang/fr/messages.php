@@ -1,7 +1,15 @@
 <?php
 // lang/fr/messages.php
-
 return [
+    'trial_message' => 'Essai gratuit — 30 jours d’accès complet.',
+    'trial_expired_message' => 'Votre période d’essai a expiré. Veuillez acheter une licence.',
+    'pro_message' => 'Licence Pro active — Merci pour votre achat.',
+    'basic_message' => 'Licence Basic active — Accès limité.',
+    'enterprise_message' => 'Licence Enterprise active — Accès complet et support prioritaire.',
+
+    'trial_ended_title' => "Période d'essai terminée",
+    'trial_ended_message' => "Votre période d'essai de 30 jours est terminée. Pour continuer à utiliser nos fonctionnalités et services, veuillez passer à un abonnement payant.",
+
     // General
     'welcome_page' => 'Bienvenue | DocuSyns',
     'welcome' => 'Bienvenue sur',

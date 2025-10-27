@@ -2,6 +2,16 @@
 // lang/en/messages.php
 
 return [
+
+    'trial_message' => 'Free trial — 30 days of full access.',
+    'trial_expired_message' => 'Your trial period has expired. Please purchase a license to continue using the system.',
+    'pro_message' => 'Pro License active — Thank you for your purchase!',
+    'basic_message' => 'Basic License active — Limited access.',
+    'enterprise_message' => 'Enterprise License active — Full access with priority support.',
+
+    'trial_ended_title' => 'Free Trial Ended',
+    'trial_ended_message' => 'Your 30-day free trial has come to an end. To continue using our amazing features and services, please upgrade to a paid plan.',
+
     // General
     'welcome_page' => 'Welcome | DocuSyns',
     'welcome' => 'Welcome to ',

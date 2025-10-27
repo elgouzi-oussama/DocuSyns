@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LicensesType;
 use App\Models\User;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
-class AdminController extends Controller
+class AdminController extends Controller implements HasMiddleware
 {
     public static function middleware(): array
     {
@@ -27,18 +27,15 @@ class AdminController extends Controller
     {
         if (Gate::allows('isAdmin')) {
             $countuser = User::where('role', 'user')->count();
-
             $countinvoice = Invoice::count();
-            return view('admin.dashboard', compact('countuser', 'countinvoice'));
         } else {
-            $countuser =  User::whereIn('role', ['admin', 'user'])->count();
+            $countuser = User::whereIn('role', ['admin', 'user'])->count();
             $countinvoice = Invoice::count();
         }
 
         return view('admin.dashboard', compact('countuser', 'countinvoice'));
-
-        // $invoices = Invoice::with('user')->latest()->paginate(10);
     }
+
     /**
      * Show the admin profile.
      */
@@ -47,12 +44,12 @@ class AdminController extends Controller
         if (Gate::allows('isSuperAdmin')) {
             $admin = Auth::user();
             return view('admin.profile.show', compact('admin'));
-        } else {
-
-            return redirect()->route('super_admin.dashboard')
-                ->with('error', 'Accès refusé.');
         }
+
+        return redirect()->route('super_admin.dashboard')
+            ->with('error', __('admin.user.access_denied'));
     }
+
     /**
      * Show the profile edit page.
      */
@@ -60,8 +57,9 @@ class AdminController extends Controller
     {
         if (!Gate::allows('isSuperAdmin')) {
             return redirect()->route('super_admin.dashboard')
-                ->with('error', 'Accès refusé.');
+                ->with('error', __('admin.user.access_denied'));
         }
+
         $admin = Auth::user();
         return view('admin.profile.edit', compact('admin'));
     }
@@ -73,35 +71,35 @@ class AdminController extends Controller
     {
         if (!Gate::allows('isSuperAdmin')) {
             return redirect()->route('admin.dashboard')
-                ->with('error', 'Accès refusé.');
+                ->with('error', __('admin.user.access_denied'));
         }
+
         $user = Auth::user();
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => "required|email|unique:users,email,{$user->id}",
-            'password' => 'nullable|string|min:6|confirmed',
-        ]);
+        $validated = $request->validate(
+            [
+                'name' => 'required|string|max:255',
+                'email' => "required|email|unique:users,email,{$user->id}",
+                'password' => 'nullable|string|min:6|confirmed',
+            ],
+            [
+                'name.required' => __('admin.user.name_required'),
+                'email.required' => __('admin.user.email_required'),
+                'email.email' => __('admin.user.email_invalid'),
+                'email.unique' => __('admin.user.email_unique'),
+                'password.min' => __('admin.user.password_min'),
+                'password.confirmed' => __('admin.user.password_confirmed'),
+            ]
+        );
 
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
             unset($validated['password']);
         }
-        /** @var \App\Models\User $user */
 
         $user->update($validated);
 
-        return back()->with('success', 'Profil mis à jour avec succès.');
-    }
-
-    public function permissions()
-    {
-        if (Gate::allows('isSuperAdmin')) {
-            $users = User::where('role', '!=', 'super_admin')->get();
-        } else {
-            $users = User::where('role', 'user')->get();
-        }
-        return view('admin.permissions.index', compact('users'));
+        return back()->with('success', __('admin.user.profile_updated'));
     }
 }

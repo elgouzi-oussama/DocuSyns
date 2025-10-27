@@ -19,8 +19,8 @@
     <h1 class="text-xl font-bold mb-4">Modifier les permissions</h1>
 
 
-    @foreach($users as $user)
     <div class="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        @foreach($users as $user)
         <!-- Header -->
         <button type="button"
             onclick="document.getElementById('user-{{ $user->id }}').classList.toggle('hidden')"
@@ -30,13 +30,13 @@
             </span>
             <span class="text-sm text-blue-600 uppercase">{{ $user->role }}</span>
         </button>
+
         <div id="user-{{ $user->id }}" class="hidden">
             @can('isSuperAdmin')
             <form method="POST" action="{{ route('super_admin.users.permissions', $user) }}">
-                @endcan
-                @cannot('isSuperAdmin')
+                @else
                 <form method="POST" action="{{ route('admin.users.permissions', $user) }}">
-                    @endcannot
+                    @endcan
                     @csrf
                     @method('PUT')
 
@@ -61,6 +61,7 @@
                         </div>
                         @endif
                         @endcan
+
                         <!-- Profile Permissions -->
                         <h3 class="col-span-full text-lg font-semibold text-gray-700 mt-4 mb-2">Permissions - Profil</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
@@ -77,6 +78,7 @@
                                 Modifier le profil
                             </label>
                         </div>
+
                         <!-- Invoices Permissions -->
                         <h3 class="col-span-full text-lg font-semibold text-gray-700 mb-2">Permissions - Bons de commande</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
@@ -110,6 +112,7 @@
                                     class="mr-2" {{ $user->hasPermission('invoice.delete') ? 'checked' : '' }}>
                                 Supprimer un bon de commande
                             </label>
+
                             @if ($user->role !== "user")
                             <label>
                                 <input type="checkbox" name="permissions[]" value="invoice.approve"
@@ -124,9 +127,8 @@
                             </label>
                             @endif
                         </div>
+
                         @if ($user->role !== "user")
-
-
                         <!-- Users Permissions -->
                         <h3 class="col-span-full text-lg font-semibold text-gray-700 mt-4 mb-2">Permissions - Utilisateurs</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
@@ -161,11 +163,10 @@
                                 Supprimer un utilisateur
                             </label>
                         </div>
-
+                        @endif
                     </div>
-                    @endif
 
-                    <div class="flex justify-end space-x-3  mb-4 me-2">
+                    <div class="flex justify-end space-x-3 mb-4 me-2">
                         @can('permission.edit')
                         <button type="submit" class="px-2 py-1 bg-blue-600 text-white rounded">Mettre à jour</button>
                         @endcan
@@ -175,7 +176,11 @@
                     </div>
                 </form>
         </div>
+
         @endforeach
+    </div>
+    <div class="mt-6">
+        {{ $users->links() }}
     </div>
 
     <div class="flex justify-end mt-6 me-2">

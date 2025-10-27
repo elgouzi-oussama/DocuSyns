@@ -22,6 +22,27 @@
             margin-left: 0;
             margin-right: 0.5rem;
         }
+
+        .blur-overlay {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .payment-modal {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 
@@ -41,6 +62,7 @@
                 <a href="{{ route('user.rapports.index') }}" class="text-gray-700 hover:text-blue-600 transition">{{ __('messages.reports') }}</a>
                 <a href="{{ route('user.contact.index') }}" class="text-gray-700 hover:text-blue-600 transition">{{ __('messages.contact') }}</a>
             </div>
+
 
             <div class="flex items-center {{ app()->getLocale() === 'ar' ? 'space-x-reverse' : '' }} space-x-4">
                 <!-- Language Switcher -->
@@ -76,12 +98,69 @@
             </div>
         </div>
     </nav>
+
     @yield('content')
+
+    <!-- Payment Notice Modal - Show if trial expired -->
+    @can('isTrialEnded')
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-sm bg-black/30">
+        <div class="bg-white/90 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/20 payment-modal">
+            <div class="text-center">
+                <!-- Icon -->
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+
+                <!-- Title -->
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                    {{ __('messages.trial_ended_title', ['default' => 'Free Trial Ended']) }}
+                </h2>
+
+                <!-- Message -->
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    {{ __('messages.trial_ended_message', ['default' => 'Your 30-day free trial has come to an end. To continue using our amazing features and services, please upgrade to a paid plan.']) }}
+                </p>
+
+
+            </div>
+        </div>
+    </div>
+    @endcan
 
     <!-- Footer -->
     <footer class="bg-white border-t mt-10 py-4 text-center text-gray-500 text-sm">
         © {{ date('Y') }} DocuSyns. {{ __('messages.all_rights_reserved') }}
     </footer>
+
+    <p class="font-semibold text-gray-800  fixed bottom-4 w-full ">
+
+
+
+        @can('isTrial')
+        {{ __('messages.trial_message') }}
+
+        @endcan
+        @can('isPro')
+        {{ __('messages.pro_message') }}
+
+        @endcan
+        @can('isBasic')
+        {{ __('messages.basic_message') }}
+
+        @endcan
+        @can('isEnterprise')
+
+        {{ __('messages.enterprise_message') }}
+
+        @endcan
+        @can('noLicense')
+        {{ __('messages.trial_expired_message') }}
+
+        @endcan
+    </p>
+    </div>
 </body>
 
 </html>

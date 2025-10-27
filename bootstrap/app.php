@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'check.user.or.guest' => \App\Http\Middleware\CheckUserOrGuest::class,
             'locale' => \App\Http\Middleware\SetLocale::class,
+            'license.check' => \App\Http\Middleware\LicenseCheck::class,
 
 
         ]);

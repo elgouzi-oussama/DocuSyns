@@ -68,7 +68,17 @@ class AdminInvoiceController extends Controller implements HasMiddleware
             'user_id' => 'required|exists:users,id',
             'file' => 'required|file|mimes:jpg,jpeg,png,bmp,tiff,pdf|max:5120',
             'statut' => 'required|in:en_attente,approuvé,rejeté',
+        ], [
+            'user_id.required' => __('admin.invoice.validation.user_required'),
+            'user_id.exists' => __('admin.invoice.validation.user_exists'),
+            'file.required' => __('admin.invoice.validation.file_required'),
+            'file.file' => __('admin.invoice.validation.file_type'),
+            'file.mimes' => __('admin.invoice.validation.file_mimes'),
+            'file.max' => __('admin.invoice.validation.file_max'),
+            'statut.required' => __('admin.invoice.validation.status_required'),
+            'statut.in' => __('admin.invoice.validation.status_invalid'),
         ]);
+
         // Store the uploaded file
         $file = $request->file('file');
         $relativePath = $file->store('invoice', 'public');
@@ -95,7 +105,7 @@ class AdminInvoiceController extends Controller implements HasMiddleware
         $allData['user_id'] = $validated['user_id'];
         $allData['statut'] = $validated['statut'];
         if (Invoice::where('reference_commande', $allData['reference_commande'])->exists()) {
-            return  redirect()->route('invoice.create')->with('error', 'Cette référence de commande existe déjà.');
+            return  redirect()->route('invoice.create')->with('error', __('admin.invoice.reference_exists'));
         }
 
 
@@ -125,22 +135,26 @@ class AdminInvoiceController extends Controller implements HasMiddleware
         // ✅ Check if reference already exists
         if (Gate::allows('isAdmin')) {
             if (Invoice::where('reference_commande', $data['reference_commande'])->exists()) {
-                return redirect()->route('admin.invoices.create')->with('error', 'Cette référence de commande existe déjà.');
+                return redirect()->route('admin.invoices.create')
+                    ->with('error', __('admin.invoice.reference_exists'));
             }
 
             $invoice = Invoice::create($data);
             $invoice = $invoice['id'];
 
-            return redirect()->route('admin.invoices.show', compact('invoice'))->with('success', 'Commande enregistrée avec succès !');
+            return redirect()->route('admin.invoices.show', compact('invoice'))
+                ->with('success', __('admin.invoice.created_success'));
         } else {
             if (Invoice::where('reference_commande', $data['reference_commande'])->exists()) {
-                return redirect()->route('super_admin.invoices.create')->with('error', 'Cette référence de commande existe déjà.');
+                return redirect()->route('super_admin.invoices.create')
+                    ->with('error', __('admin.invoice.reference_exists'));
             }
 
             $invoice = Invoice::create($data);
             $invoice = $invoice['id'];
 
-            return redirect()->route('super_admin.invoices.show', compact('invoice'))->with('success', 'Commande enregistrée avec succès !');
+            return redirect()->route('super_admin.invoices.show', compact('invoice'))
+                ->with('success', __('admin.invoice.created_success'));
         }
     }
 
@@ -175,10 +189,22 @@ class AdminInvoiceController extends Controller implements HasMiddleware
             'montant_ht'         => 'required|string',
             'montant_tva'        => 'required|string',
             'montant_ttc'        => 'required|string',
-            'statut' => 'required|in:en_attente,approuvé,rejeté',
-            'user_id' => 'required|exists:users,id',
-
+            'statut'             => 'required|in:en_attente,approuvé,rejeté',
+            'user_id'            => 'required|exists:users,id',
+        ], [
+            'reference_commande.required' => __('admin.invoice.validation.reference_commande_required'),
+            'date_commande.required'      => __('admin.invoice.validation.date_commande_required'),
+            'nom_fournisseur.required'    => __('admin.invoice.validation.nom_fournisseur_required'),
+            'commande_par.required'       => __('admin.invoice.validation.commande_par_required'),
+            'commande_a.required'         => __('admin.invoice.validation.commande_a_required'),
+            'montant_ht.required'         => __('admin.invoice.validation.montant_ht_required'),
+            'montant_tva.required'        => __('admin.invoice.validation.montant_tva_required'),
+            'montant_ttc.required'        => __('admin.invoice.validation.montant_ttc_required'),
+            'statut.required'             => __('admin.invoice.validation.statut_required'),
+            'user_id.required'            => __('admin.invoice.validation.user_id_required'),
+            'user_id.exists'              => __('admin.invoice.validation.user_id_exists'),
         ]);
+
 
 
         // Convert amounts like "810 330,00" → "810330.00"
@@ -204,10 +230,10 @@ class AdminInvoiceController extends Controller implements HasMiddleware
 
         if (Gate::allows('isAdmin')) {
             return redirect()->route('admin.invoices.show', $invoice->id)
-                ->with('success', 'Facture mise à jour avec succès.');
+                ->with('success', __('admin.invoice.updated_success'));
         } else {
             return redirect()->route('super_admin.invoices.show', $invoice->id)
-                ->with('success', 'Facture mise à jour avec succès.');
+                ->with('success', __('admin.invoice.updated_success'));
         }
     }
 
@@ -220,7 +246,7 @@ class AdminInvoiceController extends Controller implements HasMiddleware
         $invoice->delete();
 
         return redirect()->route('admin.invoices.index')
-            ->with('success', 'Facture supprimée avec succès.');
+            ->with('success', __('admin.invoice.deleted_success'));
     }
 
     /**
@@ -231,7 +257,8 @@ class AdminInvoiceController extends Controller implements HasMiddleware
         $invoice = Invoice::findOrFail($id);
         $invoice->update(['statut' => 'approuvé']);
 
-        return redirect()->back()->with('success', 'Facture approuvée.');
+        return redirect()->back()
+            ->with('success', __('admin.invoice.approved_success'));
     }
 
     /**
@@ -242,7 +269,8 @@ class AdminInvoiceController extends Controller implements HasMiddleware
         $invoice = Invoice::findOrFail($id);
         $invoice->update(['statut' => 'rejeté']);
 
-        return redirect()->back()->with('success', 'Facture rejetée.');
+        return redirect()->back()
+            ->with('success', __('admin.invoice.rejected_success'));
     }
 
 

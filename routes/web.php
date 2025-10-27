@@ -1,25 +1,27 @@
 <?php
 
+use App\Helpers\SystemHelper;
+use App\Http\Controllers\PermissionsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\LicenseController;
+use App\Http\Controllers\RapportController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminInvoiceController;
 use App\Http\Controllers\Admin\AdminUtilisateurController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\RapportController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\LocaleController;
+use Spatie\Permission\Contracts\Permission;
 
-Route::middleware('locale')->group(function () {
+Route::middleware(['locale', 'license.check'])->group(function () {
     // Language switcher route
     Route::get('/set-locale/{locale}', [LocaleController::class, 'setLocale'])->name('set-locale');
 
-    Route::get('/', function () {
-        return view('user.index');
-    })->name('index')->middleware(['check.user.or.guest']);
+    Route::get('/', [UserController::class, 'index'])->name('index')->middleware(['check.user.or.guest']);
     // Other public routes
 
     Route::get('/rapports', [RapportController::class, 'index'])->name('user.rapports.index');
@@ -127,8 +129,8 @@ Route::middleware('locale')->group(function () {
         Route::post('/invoices/{id}/reject', [AdminInvoiceController::class, 'reject'])->name('invoices.reject');
 
         // utilisateur routes
-        Route::get('/users/permissions', [AdminController::class, 'permissions'])->name('users.permissions.index');
-        Route::put('/users/permissions/{user}', [AdminUtilisateurController::class, 'permissions'])->name('users.permissions');
+        Route::get('/users/permissions', [PermissionsController::class, 'index'])->name('users.permissions.index');
+        Route::put('/users/permissions/{user}', [PermissionsController::class, 'update'])->name('users.permissions');
         Route::resource('/users', AdminUtilisateurController::class);
 
 
@@ -136,6 +138,11 @@ Route::middleware('locale')->group(function () {
         Route::get('/profile/edit', [AdminController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [AdminController::class, 'update'])->name('profile.update');
         Route::get('/profile', [AdminController::class, 'show'])->name('profile.show');
+
+
+        // License management routes
+        Route::get('/licenses', [LicenseController::class, 'index'])->name('licenses.index');
+        Route::post('/licenses/upgrade', [LicenseController::class, 'upgrade'])->name('licenses.upgrade');
     });
 
 
@@ -165,4 +172,10 @@ Route::middleware('locale')->group(function () {
         Artisan::call('view:clear');
         return "Cache is cleared";
     });
+
+
+
+    // License management routes
+    Route::get('super-admin/licenses', [LicenseController::class, 'index'])
+        ->name('super_admin.licenses.index');
 });

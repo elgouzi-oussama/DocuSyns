@@ -5,16 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
 class AdminUtilisateurController extends Controller implements HasMiddleware
 {
-
-    /**
-     * Get the middleware that should be assigned to the controller.
-     */
     public static function middleware(): array
     {
         return [
@@ -26,89 +23,121 @@ class AdminUtilisateurController extends Controller implements HasMiddleware
             new Middleware('permission:user.delete', only: ['destroy']),
         ];
     }
-    // Display all users
+
     public function index()
     {
         if (Gate::allows('isSuperAdmin')) {
-            $users = User::whereIn('role', ['admin', 'user'])->get(); // Super admin can see all users
+            $users = User::whereIn('role', ['admin', 'user'])->get();
         } else {
-            $users = User::where('role', 'user')->get(); // Other admins see only normal users
+            $users = User::where('role', 'user')->get();
         }
 
         return view('admin.users.index', compact('users'));
     }
+
     public function show(User $user)
     {
-
         return view('admin.users.show', compact('user'));
     }
 
-
-    // Show form to create a new user
     public function create()
     {
         return view('admin.users.create');
     }
 
-    // Store a new user
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users',
             'password' => 'required|confirmed|min:8',
-            'role' => 'required|in:user,admin',
+            'role'     => 'required|in:user,admin',
+        ], [
+            'name.required'     => __('admin.user.validation.name_required'),
+            'email.required'    => __('admin.user.validation.email_required'),
+            'email.email'       => __('admin.user.validation.email_email'),
+            'email.unique'      => __('admin.user.validation.email_unique'),
+            'password.required' => __('admin.user.validation.password_required'),
+            'password.confirmed' => __('admin.user.validation.password_confirmed'),
+            'password.min'      => __('admin.user.validation.password_min'),
+            'role.required'     => __('admin.user.validation.role_required'),
+            'role.in'           => __('admin.user.validation.role_in'),
         ]);
 
-        // ✅ Check if there’s already an admin
-        if ($request->role === 'admin' && User::where('role', 'admin')->exists()) {
-            return back()->withErrors(['role' => 'Un seul administrateur est autorisé.'])->withInput();
-        } elseif ($request->role === 'admin' && auth()->user()->role !== 'super_admin') {
-            return back()->withErrors(['role' => 'Vous n\'êtes pas autorisé.'])->withInput();
+
+
+
+        if (Gate::allows('isTrial')) {
+            $allowedUsers = 3;
+            $allowedAdmins = 1;
+            $totalAllowed = 4;
+        } else {
+            $license = \App\Models\License::first();
+            $allowedUsers = $license->getFeature('users');
+            $allowedAdmins = $license->getFeature('admins');
+            $totalAllowed = $license->totalAccountsAllowed();
         }
 
-        // ✅ Check if there are already two users
-        if ($request->role === 'user' && User::where('role', 'user')->count() >= 2) {
-            return back()->withErrors(['role' => 'Seulement deux utilisateurs sont autorisés.'])->withInput();
+        $currentUsers = User::where('role', 'user')->count();
+        $currentAdmins = User::where('role', 'admin')->count();
+        $currentTotal = $currentUsers + $currentAdmins;
+
+        // 🚫 Check role restrictions based on license
+        if ($request->role === 'admin' && $currentAdmins >= $allowedAdmins) {
+            return back()->withErrors([
+                'role' => __('admin.user.errors.admin_limit_reached', ['max' => $allowedAdmins]),
+            ])->withInput();
         }
 
-        // ✅ Create user if limits are respected
+        if ($request->role === 'user' && $currentUsers >= $allowedUsers) {
+            return back()->withErrors([
+                'role' => __('admin.user.errors.user_limit_reached', ['max' => $allowedUsers]),
+            ])->withInput();
+        }
+
+        if ($currentTotal >= $totalAllowed) {
+            return back()->withErrors([
+                'role' => __('admin.user.errors.total_limit_reached', ['max' => $totalAllowed]),
+            ])->withInput();
+        }
+
+
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => bcrypt($request->password),
-            'role' => $request->role,
+            'role'     => $request->role,
         ]);
 
-        return redirect()->route('super_admin.users.index')->with('success', 'Utilisateur créé avec succès.');
+        return redirect()->route('super_admin.users.index')
+            ->with('success', __('admin.user.success.created'));
     }
 
-    // Show form to edit an existing user
     public function edit(User $user)
     {
-
         return view('admin.users.edit', compact('user'));
     }
 
-    // Update an existing user
     public function update(Request $request, User $user)
     {
-
-
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => "required|email|unique:users,email,{$user->id}",
+            'name'     => 'required|string|max:255',
+            'email'    => "required|email|unique:users,email,{$user->id}",
             'password' => 'nullable|string|min:6|confirmed',
-            'role' => 'nullable|string|in:user,admin,superadmin',
+            'role'     => 'nullable|string|in:user,admin,superadmin',
+        ], [
+            'name.required'     => __('admin.user.validation.name_required'),
+            'email.required'    => __('admin.user.validation.email_required'),
+            'email.email'       => __('admin.user.validation.email_email'),
+            'email.unique'      => __('admin.user.validation.email_unique'),
+            'password.confirmed' => __('admin.user.validation.password_confirmed'),
+            'password.min'      => __('admin.user.validation.password_min'),
+            'role.in'           => __('admin.user.validation.role_in'),
         ]);
-        if ($request->role === 'admin' && User::where('role', 'admin')->exists() && $user->id !== User::where('role', 'admin')->first()->id) {
-            return back()->withErrors(['role' => 'Un seul administrateur est autorisé.'])->withInput();
+
+        if ($request->role === 'admin' && User::where('role', 'admin')->exists() && $user->id !== User::where('role', 'admin')) {
+            return back()->withErrors(['role' => __('admin.user.errors.one_admin_only')])->withInput();
         }
-
-
-
-
-
 
         if (!empty($validated['password'])) {
             $validated['password'] = bcrypt($validated['password']);
@@ -118,29 +147,15 @@ class AdminUtilisateurController extends Controller implements HasMiddleware
 
         $user->update($validated);
 
-        return redirect()->route('super_admin.users.index')->with('success', 'Utilisateur modifié avec succès.');
+        return redirect()->route('super_admin.users.index')
+            ->with('success', __('admin.user.success.updated'));
     }
 
-    // Delete a user
     public function destroy(User $user)
     {
-
-
         $user->delete();
-        return redirect()->route('super_admin.users.index')->with('success', 'Utilisateur supprimé avec succès.')->with('deleted', true);
-    }
-
-
-    // Show permissions management page
-    public function permissions(Request $request, User $user)
-    {
-        $permissions = $request->input('permissions', []);
-        $user->permissions = $permissions;
-        $user->save();
-        if (Gate::allows('isSuperAdmin')) {
-            return redirect()->route('super_admin.users.permissions.index')->with('success', 'Permissions mises à jour avec succès.');
-        } else {
-            return redirect()->route('admin.users.permissions.index')->with('success', 'Permissions mises à jour avec succès.');
-        }
+        return redirect()->route('super_admin.users.index')
+            ->with('success', __('admin.user.success.deleted'))
+            ->with('deleted', true);
     }
 }

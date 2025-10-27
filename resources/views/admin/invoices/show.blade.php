@@ -32,13 +32,37 @@
             <p><strong>{{ __('invoice.show.fields.ordered_to') }}:</strong> {{ $invoice->commande_a ?? '—' }}</p>
 
             <p><strong>{{ __('invoice.show.fields.amount_ht') }}:</strong>
-                {{ number_format($invoice->montant_ht, 2, ',', ' ') }} {{ __('admin.currency') }}
+                @if (app()->getLocale() === 'ar')
+                <span dir="ltr">
+                    {{ number_format($invoice->montant_ht, 2, ',', ' ') }}&lrm;</span>
+                <span>{{ __('admin.currency') }}</span>
+                @else
+                <span dir="ltr">
+                    {{ number_format($invoice->montant_ht, 2, ',', ' ') }}</span>
+                <span>{{ __('admin.currency') }}</span>
+                @endif
             </p>
             <p><strong>{{ __('invoice.show.fields.amount_tva') }}:</strong>
-                {{ number_format($invoice->montant_tva, 2, ',', ' ') }} {{ __('admin.currency') }}
+                @if (app()->getLocale() === 'ar')
+                <span dir="ltr">
+                    {{ number_format($invoice->montant_tva, 2, ',', ' ') }}&lrm;</span>
+                <span>{{ __('admin.currency') }}</span>
+                @else
+                <span dir="ltr">
+                    {{ number_format($invoice->montant_tva, 2, ',', ' ') }}</span>
+                <span>{{ __('admin.currency') }}</span>
+                @endif
             </p>
             <p><strong>{{ __('invoice.show.fields.amount_ttc') }}:</strong>
-                {{ number_format($invoice->montant_ttc, 2, ',', ' ') }} {{ __('admin.currency') }}
+                @if (app()->getLocale() === 'ar')
+                <span dir="ltr">
+                    {{ number_format($invoice->montant_ttc, 2, ',', ' ') }}&lrm;</span>
+                <span>{{ __('admin.currency') }}</span>
+                @else
+                <span dir="ltr">
+                    {{ number_format($invoice->montant_ttc, 2, ',', ' ') }}</span>
+                <span>{{ __('admin.currency') }}</span>
+                @endif
             </p>
 
             <p><strong>{{ __('invoice.show.fields.status') }}:</strong>

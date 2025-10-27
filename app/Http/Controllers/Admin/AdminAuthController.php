@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Hash;
 class AdminAuthController extends Controller
 {
     public function showLoginForm()
-
     {
         return view('admin.sign.login');
     }
@@ -21,26 +20,34 @@ class AdminAuthController extends Controller
         $formFields = $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:8'
+        ], [
+            'email.required' => __('admin.auth.validation.email_required'),
+            'email.email' => __('admin.auth.validation.email_invalid'),
+            'password.required' => __('admin.auth.validation.password_required'),
+            'password.min' => __('admin.auth.validation.password_min'),
         ]);
-        $remember = $request->filled('remember'); // check if "remember me" is checked
+
+        $remember = $request->filled('remember');
 
         if (Auth::attempt($formFields, $remember)) {
             if (Auth::user()->must_change_password == true) {
                 return to_route('admin.password.request');
             }
+
+            $request->session()->regenerate();
+
             if (Auth::user()->role === 'admin') {
-                $request->session()->regenerate();
                 return to_route('admin.dashboard');
             } elseif (Auth::user()->role === 'super_admin') {
-                $request->session()->regenerate();
                 return to_route('super_admin.dashboard');
             } else {
                 Auth::logout();
-                return back()->withErrors(['email' => 'Access denied. Admin only.']);
+                return back()->withErrors(['email' => __('admin.auth.access_denied')]);
             }
         }
+
         return back()->withErrors([
-            'email' => 'Invalid login or password',
+            'email' => __('admin.auth.invalid_credentials'),
         ]);
     }
 
@@ -54,29 +61,29 @@ class AdminAuthController extends Controller
         $request->validate([
             'password' => 'required|min:8|confirmed',
         ]);
-        /** @var \App\Models\User $user */
+
         $user = Auth::user();
         $user->password = Hash::make($request->password);
         $user->must_change_password = false;
         $user->save();
+
         if (!Gate::allows('isAdmin')) {
-            return redirect()->route('super_admin.dashboard')->with('success', 'Mot de passe changé avec succès.');
+            return redirect()->route('super_admin.dashboard')
+                ->with('success', __('admin.auth.password_changed'));
         } else {
-            return redirect()->route('admin.dashboard')->with('success', 'Mot de passe changé avec succès.');
+            return redirect()->route('admin.dashboard')
+                ->with('success', __('admin.auth.password_changed'));
         }
     }
 
-    // ...existing code...
     public function logout(Request $request)
     {
-        // Use the default guard since login uses Auth::attempt()
         Auth::logout();
 
-        // Invalidate session and regenerate token
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('admin.login')->with('success', 'Déconnexion réussie.');
+        return redirect()->route('admin.login')
+            ->with('success', __('admin.auth.logout_success'));
     }
-    // ...existing code...
 }
