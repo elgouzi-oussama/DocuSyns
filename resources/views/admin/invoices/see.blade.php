@@ -167,6 +167,7 @@
                 <input type="hidden" name="statut" value="{{ $allData['statut'] }}">
             </div>
 
+
             <div class="pt-6 flex justify-between">
                 <a href="{{ route('invoice.index') }}"
                     class="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">

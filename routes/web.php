@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\SystemHelper;
+use App\Http\Controllers\AiInvoiceController;
 use App\Http\Controllers\PermissionsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
@@ -50,6 +51,10 @@ Route::middleware(['locale', 'license.check'])->group(function () {
             Route::put('/',  'update')->name('profile.update')->middleware('permission:profile.edit');
             Route::get('/',  'show')->name('profile.show')->middleware('permission:profile.show');
         });
+
+    Route::post('/ai-invoice/store', [AiInvoiceController::class, 'store'])
+        ->name('ai-invoice.store')
+        ->middleware(['auth', 'role:user', 'permission:invoice.create']);
 
     // === Invoice Routes (protected) === USER ROLE
     Route::middleware(['auth', 'role:user'])

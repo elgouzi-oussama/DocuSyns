@@ -31,6 +31,8 @@ return [
     'montant_ttc' => 'Montant TTC (DH)',
     'fichier_associe' => 'Fichier associé',
 
+    'new_template' => 'Nouveau modèle',
+    'back_to_upload' => 'Retour au téléchargement',
 
 
     'profile_edit_title' => 'Modifier mon profil',

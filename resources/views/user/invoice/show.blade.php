@@ -64,17 +64,46 @@
 
                 <div>
                     <p class="text-sm text-gray-500">{{ __('messages.montant_ht') }}</p>
-                    <p class="font-medium">{{ number_format($invoice->montant_ht, 2, ',', ' ') }}</p>
+                    <p>
+                        @if (app()->getLocale() === 'ar')
+                        <span dir="ltr">
+                            {{ number_format($invoice->montant_ht, 2, ',', ' ') }}&lrm;</span>
+                        <span>{{ __('admin.currency') }}</span>
+                        @else
+                        <span dir="ltr">
+                            {{ number_format($invoice->montant_ht, 2, ',', ' ') }}</span>
+                        <span>{{ __('admin.currency') }}</span>
+                        @endif
+                    </p>
                 </div>
-
                 <div>
                     <p class="text-sm text-gray-500">{{ __('messages.montant_tva') }}</p>
-                    <p class="font-medium">{{ number_format($invoice->montant_tva, 2, ',', ' ') }}</p>
+                    <p>
+                        @if (app()->getLocale() === 'ar')
+                        <span dir="ltr">
+                            {{ number_format($invoice->montant_tva, 2, ',', ' ') }}&lrm;</span>
+                        <span>{{ __('admin.currency') }}</span>
+                        @else
+                        <span dir="ltr">
+                            {{ number_format($invoice->montant_tva, 2, ',', ' ') }}</span>
+                        <span>{{ __('admin.currency') }}</span>
+                        @endif
+                    </p>
                 </div>
 
                 <div>
                     <p class="text-sm text-gray-500">{{ __('messages.montant_ttc') }}</p>
-                    <p class="font-medium">{{ number_format($invoice->montant_ttc, 2, ',', ' ') }}</p>
+                    <p>
+                        @if (app()->getLocale() === 'ar')
+                        <span dir="ltr">
+                            {{ number_format($invoice->montant_ttc, 2, ',', ' ') }}&lrm;</span>
+                        <span>{{ __('admin.currency') }}</span>
+                        @else
+                        <span dir="ltr">
+                            {{ number_format($invoice->montant_ttc, 2, ',', ' ') }}</span>
+                        <span>{{ __('admin.currency') }}</span>
+                        @endif
+                    </p>
                 </div>
 
                 @if ($invoice->file)

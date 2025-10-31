@@ -148,6 +148,8 @@ return [
         'back' => 'Back',
         'confirm_save' => 'Confirm & Save',
         'check_before_save' => 'Please review all fields before confirming.',
+
+        'original_file' => 'Original File',
         'errors' => [
             'reference_missing' => 'Order reference is missing.',
             'date_missing' => 'Order date is missing.',

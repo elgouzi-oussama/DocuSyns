@@ -26,14 +26,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-        $serverId = SystemHelper::getServerId();
-        $license = License::first();
-        if (!$license) {
-            $license = License::create([
-                'server_id' => $serverId,
-                'auasae_' => Carbon::now()
-            ]);
-        }
+        // $serverId = SystemHelper::getServerId();
+        // $license = License::first();
+        // if (!$license) {
+        //     $license = License::create([
+        //         'server_id' => $serverId,
+        //         'auasae_' => Carbon::now()
+        //     ]);
+        // }
 
         Schema::defaultStringLength(191);
     }

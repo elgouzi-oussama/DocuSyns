@@ -59,6 +59,9 @@
                 @can('invoice.index')
                 <a href="{{ route('invoice.index') }}" class="text-gray-700 hover:text-blue-600 transition">{{ __('messages.orders') }}</a>
                 @endcan
+                @guest
+                <a href="{{ route('invoice.index') }}" class="text-gray-700 hover:text-blue-600 transition">{{ __('messages.orders') }}</a>
+                @endguest
                 <a href="{{ route('user.rapports.index') }}" class="text-gray-700 hover:text-blue-600 transition">{{ __('messages.reports') }}</a>
                 <a href="{{ route('user.contact.index') }}" class="text-gray-700 hover:text-blue-600 transition">{{ __('messages.contact') }}</a>
             </div>
@@ -130,36 +133,34 @@
     @endcan
 
     <!-- Footer -->
-    <footer class="bg-white border-t mt-10 py-4 text-center text-gray-500 text-sm">
-        © {{ date('Y') }} DocuSyns. {{ __('messages.all_rights_reserved') }}
+    <footer class="flex bg-white border-t mt-10 py-4 text-center text-gray-500 text-sm">
+        <p class="font-semibold text-gray-800  text-start  w-[40%] px-3 ">
+
+            @can('isTrial')
+            {{ __('messages.trial_message') }}
+
+            @endcan
+            @can('isPro')
+            {{ __('messages.pro_message') }}
+
+            @endcan
+            @can('isBasic')
+            {{ __('messages.basic_message') }}
+
+            @endcan
+            @can('isEnterprise')
+
+            {{ __('messages.enterprise_message') }}
+
+            @endcan
+            @can('noLicense')
+            {{ __('messages.trial_expired_message') }}
+
+            @endcan
+        </p>
+        <p class="w-[60%] text-start"> © {{ date('Y') }} DocuSyns. {{ __('messages.all_rights_reserved') }}</p>
     </footer>
 
-    <p class="font-semibold text-gray-800  fixed bottom-4 w-full ">
-
-
-
-        @can('isTrial')
-        {{ __('messages.trial_message') }}
-
-        @endcan
-        @can('isPro')
-        {{ __('messages.pro_message') }}
-
-        @endcan
-        @can('isBasic')
-        {{ __('messages.basic_message') }}
-
-        @endcan
-        @can('isEnterprise')
-
-        {{ __('messages.enterprise_message') }}
-
-        @endcan
-        @can('noLicense')
-        {{ __('messages.trial_expired_message') }}
-
-        @endcan
-    </p>
     </div>
 </body>
 

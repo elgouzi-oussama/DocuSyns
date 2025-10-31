@@ -24,6 +24,14 @@
             📄 {{ __('messages.view_invoices') }}
         </a>
         @endcan
+        @guest
+        <a href="{{ route('invoice.create') }}" class="bg-blue-600 text-white mx-3 px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+            ➕ {{ __('messages.add_invoice') }}
+        </a>
+        <a href="{{ route('invoice.index') }}" class="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition">
+            📄 {{ __('messages.view_invoices') }}
+        </a>
+        @endguest
     </div>
 </section>
 @endsection

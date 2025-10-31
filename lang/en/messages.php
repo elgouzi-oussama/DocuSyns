@@ -38,6 +38,10 @@ return [
     'edit' => 'Edit',
 
 
+    'new_template' => 'New template',
+    'back_to_upload' => 'Back to upload',
+
+
 
 
 

@@ -148,6 +148,8 @@ return [
         'back' => 'رجوع',
         'confirm_save' => 'تأكيد وحفظ',
         'check_before_save' => 'يرجى مراجعة جميع الحقول قبل تأكيد الحفظ.',
+
+        'original_file' => 'الملف الأصلي',
         'errors' => [
             'reference_missing' => 'مرجع الطلب غير موجود.',
             'date_missing' => 'تاريخ الطلب غير موجود.',

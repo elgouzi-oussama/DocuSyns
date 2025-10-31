@@ -66,7 +66,17 @@
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $invoice->reference_commande }}</td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $invoice->nom_fournisseur }}</td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $invoice->date_commande }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-700">{{ number_format($invoice->montant_ttc, 2, ',', ' ') }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-700">
+                            @if (app()->getLocale() === 'ar')
+                            <span dir="ltr">
+                                {{ number_format($invoice->montant_ttc, 2, ',', ' ') }}&lrm;</span>
+                            <span>{{ __('admin.currency') }}</span>
+                            @else
+                            <span dir="ltr">
+                                {{ number_format($invoice->montant_ttc, 2, ',', ' ') }}</span>
+                            <span>{{ __('admin.currency') }}</span>
+                            @endif
+                        </td>
                         <td class="px-6 py-4 text-sm text-right space-x-3 ">
                             @can('invoice.show')
                             <a href="{{ route('invoice.show', $invoice->id) }}"

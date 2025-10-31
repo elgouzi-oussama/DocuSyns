@@ -148,6 +148,8 @@ return [
         'back' => 'Retour',
         'confirm_save' => 'Confirmer et enregistrer',
         'check_before_save' => 'Veuillez vérifier tous les champs avant de confirmer.',
+
+        'original_file' => 'Fichier Original',
         'errors' => [
             'reference_missing' => 'La référence de commande est manquante.',
             'date_missing' => 'La date de commande est manquante.',
