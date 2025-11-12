@@ -62,43 +62,52 @@ class InvoiceParserService
      */
     public function extractOrderDate($text)
     {
-        // atkadaw
-        // Pattern 1: Standard format with newline
-        if (preg_match('/Date\s+commande\s+.*?\n\s*(\d{2}\/\d{2}\/\d{2})/is', $text, $matches) || preg_match('/Date\s+commande.*?\|\s*(\d{2}\/\d{2}\/\d{2})/is', $text, $matches)) {
-            $rawDate = $matches[1];
-            [$day, $month, $year] = explode('/', $rawDate);
+        // Normalize spaces and newlines
+        $text = preg_replace('/\s+/', ' ', $text);
 
-            // Add 20 in front of the 2-digit year
-            $formattedDate = sprintf('20%s-%s-%s', $year, $month, $day);
+        // 🟢 Atacadao — date appears after article number (e.g., "2509002524841 22/09/25 00:00 319 CCFD")
+        if (preg_match('/\b(\d{2})\/(\d{2})\/(\d{2})\b/', $text, $matches)) {
+            $day = $matches[1];
+            $month = $matches[2];
+            $year = $matches[3];
 
-            return $formattedDate;
+            // Assume 20xx for 2-digit year
+            if (strlen($year) === 2) {
+                $year = '20' . $year;
+            }
+
+            return sprintf('%s-%s-%s', $year, $month, $day);
         }
-        if (preg_match('/Date\s+de\s+commande\s+.*?\n\s*(\d{2}\/\d{2}\/\d{2})/is', $text, $matches)) {
-            $rawDate = $matches[1];
-            [$day, $month, $year] = explode('/', $rawDate);
 
-            // Add 20 in front of the 2-digit year
-            $formattedDate = sprintf('20%s-%s-%s', $year, $month, $day);
+        // 🟢 Standard "Date commande" line (Aswak, Atacadao formatted)
+        if (preg_match('/Date\s+commande\s*[:\-]?\s*(\d{2})[\/\.](\d{2})[\/\.](\d{2,4})/i', $text, $matches)) {
+            $day = $matches[1];
+            $month = $matches[2];
+            $year = $matches[3];
 
-            return $formattedDate;
+            if (strlen($year) === 2) {
+                $year = '20' . $year;
+            }
+
+            return sprintf('%s-%s-%s', $year, $month, $day);
         }
-        // kazyon
+
+        // 🟢 Kazyon
         if (preg_match('/Date\s+Commande\s*:\s*(\d{2})[\/\.](\d{2})[\/\.](\d{2,4})/i', $text, $matches)) {
             $day = $matches[1];
             $month = $matches[2];
             $year = $matches[3];
 
-            // If the year is 2 digits, prefix it with "20"
             if (strlen($year) === 2) {
                 $year = '20' . $year;
             }
 
-            // Format as YYYY-MM-DD
             return sprintf('%s-%s-%s', $year, $month, $day);
         }
 
         return null;
     }
+
 
     /**
      * Extract montant_ht (amount before tax)

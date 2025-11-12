@@ -26,7 +26,7 @@
                 @if (!empty($allData['reference_commande']))
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1 select-none">{{ __('confirm.reference') }}</label>
-                    <input type="text" name="reference_commande"
+                    <input type="text" readonly name="reference_commande"
                         value="{{ $allData['reference_commande'] }}"
                         class="bg-gray-200 p-2 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">
                 </div>
@@ -40,7 +40,7 @@
                 @if (!empty($allData['date_commande']))
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1 select-none">{{ __('confirm.date') }}</label>
-                    <input type="date" name="date_commande"
+                    <input type="date" readonly name="date_commande"
                         value="{{ \Carbon\Carbon::parse($allData['date_commande'])->format('Y-m-d') }}"
                         class="bg-gray-200 p-2 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">
                 </div>
@@ -54,7 +54,7 @@
                 @if (!empty($allData['nom_fournisseur']))
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1 select-none">{{ __('confirm.supplier_name') }}</label>
-                    <input type="text" name="nom_fournisseur"
+                    <input type="text" readonly name="nom_fournisseur"
                         value="{{ $allData['nom_fournisseur'] }}"
                         class="bg-gray-200 p-2 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">
                 </div>
@@ -68,7 +68,7 @@
                 @if (!empty($allData['code_fournisseur']))
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1 select-none">{{ __('confirm.supplier_code') }}</label>
-                    <input type="text" name="code_fournisseur"
+                    <input type="text" readonly name="code_fournisseur"
                         value="{{ $allData['code_fournisseur'] }}"
                         class="bg-gray-200 p-2 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">
                 </div>
@@ -82,7 +82,7 @@
                 @if (!empty($allData['commande_par']))
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1 select-none">{{ __('confirm.ordered_by') }}</label>
-                    <textarea name="commande_par" rows="2"
+                    <textarea name="commande_par" readonly rows="2"
                         class="bg-gray-200 p-2 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">{{ $allData['commande_par'] }}</textarea>
                 </div>
                 @else
@@ -95,7 +95,7 @@
                 @if (!empty($allData['commande_a']))
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1 select-none">{{ __('confirm.ordered_to') }}</label>
-                    <textarea name="commande_a" rows="2"
+                    <textarea name="commande_a" readonly rows="2"
                         class="bg-gray-200 p-2 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">{{ $allData['commande_a'] }}</textarea>
                 </div>
                 @else
@@ -108,7 +108,7 @@
                 @if (!empty($allData['montant_ht']))
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1 select-none">{{ __('confirm.amount_ht') }}</label>
-                    <input type="text" name="montant_ht"
+                    <input type="text" readonly name="montant_ht"
                         value="{{ number_format((float)$allData['montant_ht'], 2, ',', ' ') }}"
                         class="bg-gray-200 p-2 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">
                 </div>
@@ -122,7 +122,7 @@
                 @if (!empty($allData['montant_tva']))
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1 select-none">{{ __('confirm.amount_tva') }}</label>
-                    <input type="text" name="montant_tva"
+                    <input type="text" readonly name="montant_tva"
                         value="{{ number_format((float)$allData['montant_tva'], 2, ',', ' ') }}"
                         class="bg-gray-200 p-2 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">
                 </div>
@@ -136,7 +136,7 @@
                 @if (!empty($allData['montant_ttc']))
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1 select-none">{{ __('confirm.amount_ttc') }}</label>
-                    <input type="text" name="montant_ttc"
+                    <input type="text" readonly name="montant_ttc"
                         value="{{ number_format((float)$allData['montant_ttc'], 2, ',', ' ') }}"
                         class="bg-gray-200 p-2 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500">
                 </div>

@@ -2,31 +2,131 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Str;
+
 /**
  * InvoiceParser
  *
  * Parse a flat array of strings (like lines extracted from a PDF/CSV/whatever)
  * into an array of associative records representing articles.
- * 
- * Supports multiple invoice formats:
- * - Atacadao format (with prices)
- * - Aswak Essalam format (without prices)
  */
 class InvoiceParserForArticles
 {
     /**
      * Parse lines into structured article records.
      *
-     * @param array $lines Flat array of strings (the raw data)
+     * @param array $lines Flat array of strings (the raw data you showed)
      * @return array List of associative arrays (records)
      */
-    public static function parse(array $lines): array
+    public static function parse(array $lines, $text): array
     {
-        // Normalize lines: replace tabs with spaces and trim
-        $lines = array_map(function ($line) {
-            return trim(preg_replace('/\t+/', ' ', $line));
-        }, $lines);
 
+        $aswak = collect($lines)->contains(fn($line) => Str::contains($line, 'ASWAK ASSALAM'));
+        $kazyon = collect($lines)->contains(fn($line) => Str::contains($line, 'KAZYON'));
+
+
+        // dd($lines);
+        if ($aswak) {
+            $startWord = 'Qte en stock';
+            $endWord = 'Date de livraison';
+            $collecting = false;
+            $articleBlocks = [];
+            $currentBlock = [];
+
+            // 1️⃣ Extract all blocks between Article … Date de livraison
+            foreach ($lines as $line) {
+                if (stripos($line, $startWord) !== false) {
+                    $collecting = true;
+                    continue;
+                }
+
+                if (stripos($line, $endWord) !== false) {
+                    $collecting = false;
+                    if (!empty($currentBlock)) {
+                        $articleBlocks[] = $currentBlock;
+                        $currentBlock = [];
+                    }
+                    continue;
+                }
+
+                if ($collecting) {
+                    // Detect a new article starting with 13 digits
+                    if (preg_match('/^\d{13}/', $line) && !empty($currentBlock)) {
+                        $articleBlocks[] = $currentBlock;
+                        $currentBlock = [];
+                    }
+                    $currentBlock[] = trim($line);
+                }
+            }
+
+            // Close last block
+            if (!empty($currentBlock)) {
+                $articleBlocks[] = $currentBlock;
+            }
+
+            // 2️⃣ Parse each article block
+            $results = [];
+
+            foreach ($articleBlocks as $block) {
+                $text = trim(implode(' ', $block));
+                $text = preg_replace('/\s+/', ' ', $text); // normalize spaces
+
+                // Match flexible formats:
+                // article(13d) name(anything) type_uc letters then VL + no_ligne + qtys
+                preg_match(
+                    '/(?<article>\d{13})(?<libelle>.*?)\s+(?<type_uc>[A-Z]+)\s*(?<vl>\d)\s*(?<no_ligne>\d{10,})\s+(?<uvc_uc>\d+)\s+(?<quant_uc>[\d.]+)\s+(?<qte_stock>\d+)/',
+                    $text,
+                    $m
+                );
+
+                if (!empty($m)) {
+                    $results[] = [
+                        'article'   => trim($m['article'] ?? ''),
+                        'libelle'   => trim($m['libelle'] ?? ''),
+                        'type_uc'   => trim($m['type_uc'] ?? ''),
+                        'vl'        => $m['vl'] === '' ? '0' : trim($m['vl']),
+                        'no_ligne'  => trim($m['no_ligne'] ?? ''),
+                        'uvc_uc'    => trim($m['uvc_uc'] ?? ''),
+                        'quant_uc'  => trim($m['quant_uc'] ?? ''),
+                        'qte_stock' => trim($m['qte_stock'] ?? ''),
+                    ];
+                }
+            }
+
+            return ($results);
+        }
+
+
+        // 🟢 CASE 2: KAZYON RETAIL
+        if ($kazyon) {
+            // $text = trim(preg_replace('/\s+/', ' ', implode(' ', $lines))); // combine all lines
+
+            $results = [];
+
+            if (preg_match_all(
+                '/(?<article_code>\d{9})\s*(?<libelle>[A-Z0-9\s\-]+?)\s*(?<ean>\d{13})\s*(?<date_livraison>\d{2}\.\d{2}\.\d{4})\s*(?<unit_par_colis>\d+)\s*(?<quantite_colis>\d+)\s*(?<total_unites>\d+)/',
+                $text,
+                $matches,
+                PREG_SET_ORDER
+            )) {
+                foreach ($matches as $m) {
+                    $results[] = [
+                        'article_code'    => trim($m['article_code'] ?? ''),
+                        'libelle'         => trim($m['libelle'] ?? ''),
+                        'ean'             => trim($m['ean'] ?? ''),
+                        'date_livraison'  => trim($m['date_livraison'] ?? ''),
+                        'unit_par_colis'  => trim($m['unit_par_colis'] ?? ''),
+                        'quantite_colis'  => trim($m['quantite_colis'] ?? ''),
+                        'total_unites'    => trim($m['total_unites'] ?? ''),
+                    ];
+                }
+            }
+
+            return $results;
+        }
+
+
+        //
         $n = count($lines);
         $rawRecords = [];
         $inArticleSection = false;
@@ -59,8 +159,9 @@ class InvoiceParserForArticles
 
             // Detect start of a record: line begins with digits (article code)
             // But exclude dates (contains /) and very long numbers (order numbers)
-            if (preg_match('/^\d+/', $line) && !preg_match('/\//', $line)) {
+            if (preg_match('/^\d+\b/', $line) && !preg_match('/\//', $line)) {
                 // Additional validation: check if line contains expected article structure
+                // Articles should have "Piece" or similar unit type
                 $testLine = $line;
                 $j = $i + 1;
 
@@ -71,8 +172,7 @@ class InvoiceParserForArticles
                         $j++;
                         continue;
                     }
-                    // Stop at next article or summary lines
-                    if (preg_match('/^\d+/', $next) && !preg_match('/\//', $next)) {
+                    if (preg_match('/^\d+\b/', $next) && !preg_match('/\//', $next)) {
                         break;
                     }
                     if (preg_match('/^TOTAL\b|^TVA\b|^MONTANT\b|^Date\s+de\s+livraison/i', $next)) {
@@ -83,7 +183,7 @@ class InvoiceParserForArticles
                 }
 
                 // Validate that this looks like an article record
-                if (preg_match('/\b(Piece|Pce|Pc|PCB|Unit|Unite|Kg|G)\b/i', $testLine)) {
+                if (preg_match('/\b(Piece|Pce|Pc|Unit|Unite|Kg|G)\b/i', $testLine)) {
                     $current = preg_replace('/\s+/', ' ', trim($testLine));
                     $rawRecords[] = $current;
                     $i = $j - 1;
@@ -92,164 +192,93 @@ class InvoiceParserForArticles
         }
 
         $items = [];
-        dd($rawRecords);
         foreach ($rawRecords as $raw) {
-            $item = self::parseRecord($raw);
-            if ($item) {
-                $items[] = $item;
+            // Try a regex that captures the known pieces.
+            $pattern = '/^
+                (?P<Article>\d+)\s+
+                (?P<Libelle>.+?)\s+
+                (?P<Type>Piece|Pce|Pc|Unit|Unite|Kg|G)\s+
+                (?P<VL>\d+)\s+
+                (?P<No_ligne>\d+)\s+
+                (?P<UVC_UC>\d+)\s+
+                (?P<Quant_en_UC>[\d\.,\s]+)\s+
+                (?P<Prix_achat_net>[\d\.,]+)\s*
+                (?P<UniteField>Piece|Pce|Pc|Unit|Unite|Kg|G)?\s*
+                (?P<Total_prix_achat_net>[\d\s\.,]+)
+            $/ix';
+
+            $parsed = false;
+            if (preg_match($pattern, $raw, $m)) {
+                $items[] = [
+                    'Article' => $m['Article'],
+                    'Libelle article' => trim($m['Libelle']),
+                    'Type U.C.' => trim($m['Type']),
+                    'VL' => trim($m['VL']),
+                    'No ligne' => trim($m['No_ligne']),
+                    'UVC/UC' => trim($m['UVC_UC']),
+                    'Quant en UC' => trim($m['Quant_en_UC']),
+                    'Prix achat net' => trim($m['Prix_achat_net']),
+                    'Unite' => isset($m['UniteField']) && $m['UniteField'] ? trim($m['UniteField']) : trim($m['Type']),
+                    'Total prix achat net' => trim($m['Total_prix_achat_net']),
+                ];
+                $parsed = true;
+            }
+
+            if (!$parsed) {
+                // Fallback: token-based parsing
+                $tokens = preg_split('/\s+/', $raw);
+                $article = array_shift($tokens);
+
+                // Find first token that looks like a known Type
+                $typeIndex = null;
+                foreach ($tokens as $idx => $t) {
+                    if (preg_match('/^(Piece|Pce|Pc|Unit|Unite|Kg|G)$/i', $t)) {
+                        $typeIndex = $idx;
+                        break;
+                    }
+                }
+
+                if ($typeIndex === null) {
+                    continue; // Skip invalid records
+                }
+
+                $libelleTokens = array_slice($tokens, 0, $typeIndex);
+                $libelle = implode(' ', $libelleTokens);
+                $type = $tokens[$typeIndex];
+                $tail = array_slice($tokens, $typeIndex + 1);
+
+                $VL = $tail[0] ?? '';
+                $No_ligne = $tail[1] ?? '';
+                $UVC_UC = $tail[2] ?? '';
+                $Quant_en_UC = $tail[3] ?? '';
+                $Prix_achat_net = $tail[4] ?? '';
+                $maybeUnit = $tail[5] ?? null;
+
+                // Handle glued price and unit
+                if ($Prix_achat_net !== '' && preg_match('/^([0-9\.,]+)([A-Za-z]+.*)$/', $Prix_achat_net, $pm)) {
+                    $Prix_achat_net = $pm[1];
+                    $maybeUnit = $pm[2] . ($maybeUnit ? ' ' . $maybeUnit : '');
+                }
+
+                $consumed = 5 + ($maybeUnit ? 1 : 0);
+                $remaining = array_slice($tail, $consumed);
+                $Total_prix_achat_net = implode(' ', $remaining);
+
+                $items[] = [
+                    'Article' => $article,
+                    'Libelle article' => trim($libelle),
+                    'Type U.C.' => trim($type),
+                    'VL' => trim($VL),
+                    'No ligne' => trim($No_ligne),
+                    'UVC/UC' => trim($UVC_UC),
+                    'Quant en UC' => trim($Quant_en_UC),
+                    'Prix achat net' => trim($Prix_achat_net),
+                    'Unite' => $maybeUnit ? trim($maybeUnit) : trim($type),
+                    'Total prix achat net' => trim($Total_prix_achat_net),
+                ];
             }
         }
 
         return $items;
-    }
-
-    /**
-     * Parse a single record string into an associative array
-     */
-    private static function parseRecord(string $raw): ?array
-    {
-        // Normalize spaces
-        $raw = preg_replace('/\s+/', ' ', trim($raw));
-
-        // Try Atacadao format first (with prices)
-        $patternAtacadao = '/^
-            (?P<Article>\d+)\s+
-            (?P<Libelle>.+?)\s+
-            (?P<Type>Piece|Pce|Pc|Unit|Unite|Kg|G)\s+
-            (?P<VL>\d+)\s+
-            (?P<No_ligne>\d+)\s+
-            (?P<UVC_UC>\d+)\s+
-            (?P<Quant_en_UC>[\d\.,\s]+)\s+
-            (?P<Prix_achat_net>[\d\.,]+)\s*
-            (?P<UniteField>Piece|Pce|Pc|Unit|Unite|Kg|G)?\s*
-            (?P<Total_prix_achat_net>[\d\s\.,]+)
-        $/ix';
-
-        if (preg_match($patternAtacadao, $raw, $m)) {
-            return [
-                'Article' => $m['Article'],
-                'Libelle article' => trim($m['Libelle']),
-                'Type U.C.' => trim($m['Type']),
-                'VL' => trim($m['VL']),
-                'No ligne' => trim($m['No_ligne']),
-                'UVC/UC' => trim($m['UVC_UC']),
-                'Quant en UC' => trim($m['Quant_en_UC']),
-                'Prix achat net' => trim($m['Prix_achat_net']),
-                'Unite' => isset($m['UniteField']) && $m['UniteField'] ? trim($m['UniteField']) : trim($m['Type']),
-                'Total prix achat net' => trim($m['Total_prix_achat_net']),
-                'No. operation speciale' => '',
-            ];
-        }
-
-        // Try Aswak Essalam format - more flexible parsing
-        // Pattern: Article Libelle Type VL NoLigne UVCUC Quantity OperationNo Stock
-        // Example: 6111175000741 THE VERT DAHMISS 41022 200G PCB 0 0095568240011 50 400.000 0
-
-        $patternAswak = '/^
-            (?P<Article>\d+)\s*
-            (?P<Libelle>.+?)\s+
-            (?P<Type>PCB|Piece|Pce|Pc|Unit|Unite|Kg|G)\s*
-            (?P<VL>\d+)\s*
-            (?P<No_ligne>\d+)\s*
-            (?P<UVC_UC>\d+)\s*
-            (?P<Quant_en_UC>[\d\.,]+)\s*
-            (?P<No_operation>\d+)
-        $/ix';
-
-        if (preg_match($patternAswak, $raw, $m)) {
-            return [
-                'Article' => $m['Article'],
-                'Libelle article' => trim($m['Libelle']),
-                'Type U.C.' => trim($m['Type']),
-                'VL' => trim($m['VL']),
-                'No ligne' => trim($m['No_ligne']),
-                'UVC/UC' => trim($m['UVC_UC']),
-                'Quant en UC' => trim($m['Quant_en_UC']),
-                'Prix achat net' => '',
-                'Unite' => trim($m['Type']),
-                'Total prix achat net' => '',
-                'No. operation speciale' => trim($m['No_operation']),
-            ];
-        }
-
-        // Fallback: Manual token parsing
-        // Split by whitespace but handle numbers without spaces
-        $tokens = preg_split('/\s+/', $raw);
-
-        if (count($tokens) < 4) {
-            return null; // Not enough data
-        }
-
-        $article = array_shift($tokens);
-
-        // Sometimes article code and libelle are stuck together
-        // Example: "6111175000741THE VERT" needs to be split
-        if (strlen($article) > 15 && preg_match('/^(\d+)([A-Z].+)$/i', $article, $split)) {
-            $article = $split[1];
-            array_unshift($tokens, $split[2]);
-        }
-
-        // Find type keyword position
-        $typeIndex = null;
-        foreach ($tokens as $idx => $t) {
-            if (preg_match('/^(PCB|Piece|Pce|Pc|Unit|Unite|Kg|G)$/i', $t)) {
-                $typeIndex = $idx;
-                break;
-            }
-        }
-
-        if ($typeIndex === null) {
-            return null;
-        }
-
-        // Extract libelle (everything before type)
-        $libelleTokens = array_slice($tokens, 0, $typeIndex);
-        $libelle = implode(' ', $libelleTokens);
-        $type = $tokens[$typeIndex];
-
-        // Get remaining tokens after type
-        $tail = array_slice($tokens, $typeIndex + 1);
-
-        // Try to determine format by checking if we have price-like values
-        $hasPrices = false;
-        if (count($tail) >= 7) {
-            // Check if position 4 looks like a price (has decimal)
-            if (isset($tail[4]) && preg_match('/\d+\.\d+/', $tail[4])) {
-                $hasPrices = true;
-            }
-        }
-
-        if ($hasPrices) {
-            // Atacadao format
-            return [
-                'Article' => $article,
-                'Libelle article' => trim($libelle),
-                'Type U.C.' => trim($type),
-                'VL' => $tail[0] ?? '',
-                'No ligne' => $tail[1] ?? '',
-                'UVC/UC' => $tail[2] ?? '',
-                'Quant en UC' => $tail[3] ?? '',
-                'Prix achat net' => $tail[4] ?? '',
-                'Unite' => $tail[5] ?? trim($type),
-                'Total prix achat net' => implode(' ', array_slice($tail, 6)),
-                'No. operation speciale' => '',
-            ];
-        } else {
-            // Aswak Essalam format
-            // Expected: VL NoLigne UVCUC Quantity OperationNo [Stock]
-            return [
-                'Article' => $article,
-                'Libelle article' => trim($libelle),
-                'Type U.C.' => trim($type),
-                'VL' => $tail[0] ?? '',
-                'No ligne' => $tail[1] ?? '',
-                'UVC/UC' => $tail[2] ?? '',
-                'Quant en UC' => $tail[3] ?? '',
-                'Prix achat net' => '',
-                'Unite' => trim($type),
-                'Total prix achat net' => '',
-                'No. operation speciale' => $tail[4] ?? '',
-            ];
-        }
     }
 }

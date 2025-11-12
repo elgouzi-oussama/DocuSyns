@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Services\InvoiceExtractorService;
 use App\Services\InvoiceParserForArticles;
 use App\Services\InvoiceParserService;
 use Smalot\PdfParser\Parser;
@@ -98,21 +97,13 @@ class AdminInvoiceController extends Controller implements HasMiddleware
 
             $text = $ocr->run();
         }
-        // dd($text);
         // $parserai = new InvoiceExtractorService();
         // $data = $parserai->extractFields($text);
         // dd($data);
 
         $lines = explode("\n", $text);
-        dd($lines);
         $parserai = new InvoiceParserForArticles();
-        $articles = $parserai->parse($lines);
-        dd($articles);
-
-
-
-        // $articles = $this->extractArticles($text);
-        // dd($articles);
+        $articles = $parserai->parse($lines, $text);
 
 
         // Extract all data at once
@@ -122,7 +113,6 @@ class AdminInvoiceController extends Controller implements HasMiddleware
         $allData['user_id'] = $validated['user_id'];
         $allData['statut'] = $validated['statut'];
         $allData['items'] = $articles;
-        dd($allData);
         if (Invoice::where('reference_commande', $allData['reference_commande'])->exists()) {
             return  redirect()->route(userRoute('invoice.create'))->with('error', __('admin.invoice.reference_exists'));
         }

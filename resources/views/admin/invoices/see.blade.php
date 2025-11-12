@@ -205,7 +205,7 @@
 
 
             <div class="pt-6 flex justify-between">
-                <a href="{{ route('invoice.index') }}"
+                <a href="{{ route('invoice.create') }}"
                     class="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                     {{ __('invoice.confirm.buttons.back') }}
                 </a>
