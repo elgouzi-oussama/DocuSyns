@@ -11,17 +11,15 @@ return [
     'trial_ended_title' => 'انتهت الفترة التجريبية',
     'trial_ended_message' => 'انتهت فترة تجربتك المجانية التي استمرت 30 يومًا. للاستمرار في استخدام ميزاتنا وخدماتنا، يرجى الترقية إلى اشتراك مدفوع.',
 
-
-    // General
+    // عام
     'welcome_page' => 'مرحبا بك | DocuSyns',
     'welcome' => 'مرحبا بك في ',
-    'inside_welcome' => 'قم بإدارة فواتيرك وتقاريرك والمزيد من مكان واحد.',
-    'add_invoice' => 'إضافة فاتورة',
-    'view_invoices' => 'عرض الفواتير',
+    'inside_welcome' => 'قم بإدارة طلباتك وتقاريرك والمزيد من مكان واحد.',
+    'add_invoice' => 'إضافة أمر شراء',
+    'view_invoices' => 'عرض أوامر الشراء',
     'create_order' => 'إنشاء أمر شراء',
 
-    // index invoice 
-
+    // تفاصيل الطلب
     'invoice_details_title' => 'تفاصيل أمر الشراء | DocuSyns',
     'invoice_details' => 'تفاصيل أمر الشراء',
     'reference_commande' => 'رقم المرجع',
@@ -37,11 +35,8 @@ return [
     'view_file' => 'عرض الملف',
 
     'edit' => 'تعديل',
-
     'new_template' => 'نموذج جديد',
     'back_to_upload' => 'العودة إلى التحميل',
-
-
 
     'home' => 'الصفحة الرئيسية',
     'back' => 'رجوع',
@@ -55,7 +50,7 @@ return [
     'actions' => 'الإجراءات',
     'all_rights_reserved' => 'جميع الحقوق محفوظة',
 
-    // Navigation
+    // التنقل
     'orders' => 'الطلبات',
     'reports' => 'التقارير',
     'contact' => 'اتصل',
@@ -63,19 +58,19 @@ return [
     'logout' => 'تسجيل الخروج',
     'login' => 'تسجيل الدخول',
 
-    // Invoice/Purchase Order
+    // أوامر الشراء
     'purchase_orders' => 'أوامر الشراء',
     'create_purchase_order' => 'إنشاء أمر شراء',
     'modify_purchase_order' => 'تعديل بيانات أمر الشراء',
     'purchase_order_details' => 'تفاصيل أمر الشراء',
-    'back_to_invoices' => 'العودة إلى الفواتير',
-    'no_invoices' => 'لم يتم العثور على فواتير',
+    'back_to_invoices' => 'العودة إلى الطلبات',
+    'no_invoices' => 'لم يتم العثور على أوامر شراء',
     'add_automatic' => 'إضافة تلقائية (بواسطة صورة أو ملف)',
-    'confirm_delete' => 'حذف هذا الطلب؟',
+    'confirm_delete' => 'هل تريد حذف هذا الطلب؟',
     'verify_data' => 'تحقق من البيانات قبل الحفظ',
     'confirm_save' => 'تأكيد وحفظ',
 
-    // Fields
+    // الحقول
     'reference_number' => 'رقم المرجع',
     'order_date' => 'تاريخ الطلب',
     'supplier_name' => 'اسم المورد',
@@ -94,7 +89,7 @@ return [
 
     'new_password_optional' => 'كلمة مرور جديدة (اختياري)',
 
-    // Auth
+    // المصادقة
     'email' => 'البريد الإلكتروني',
     'password' => 'كلمة المرور',
     'remember_me' => 'تذكرني',
@@ -102,7 +97,7 @@ return [
     'new_password' => 'كلمة مرور جديدة (اختياري)',
     'confirm_password' => 'تأكيد كلمة المرور',
 
-    // Profile
+    // الملف الشخصي
     'edit_profile' => 'تعديل الملف الشخصي',
     'my_profile' => 'ملفي الشخصي',
     'account_info' => 'معلومات الحساب',
@@ -111,13 +106,13 @@ return [
     'created_at' => 'تاريخ الإنشاء',
     'updated_at' => 'آخر تحديث',
 
-    // Contact
+    // التواصل
     'send_message' => 'إرسال الرسالة',
     'subject' => 'الموضوع',
     'message' => 'الرسالة',
     'contact_admin' => 'إرسال رسالة إلى فريق الإدارة',
 
-    // Messages
+    // الرسائل
     'field_not_found' => ':field غير موجود في أمر الشراء',
     'success' => 'تمت العملية بنجاح',
     'error' => 'حدث خطأ',

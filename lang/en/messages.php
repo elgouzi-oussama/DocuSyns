@@ -3,6 +3,7 @@
 
 return [
 
+    // License & Trial Messages
     'trial_message' => 'Free trial — 30 days of full access.',
     'trial_expired_message' => 'Your trial period has expired. Please purchase a license to continue using the system.',
     'pro_message' => 'Pro License active — Thank you for your purchase!',
@@ -10,17 +11,17 @@ return [
     'enterprise_message' => 'Enterprise License active — Full access with priority support.',
 
     'trial_ended_title' => 'Free Trial Ended',
-    'trial_ended_message' => 'Your 30-day free trial has come to an end. To continue using our amazing features and services, please upgrade to a paid plan.',
+    'trial_ended_message' => 'Your 30-day free trial has ended. To continue using all features and services, please upgrade to a paid plan.',
 
     // General
     'welcome_page' => 'Welcome | DocuSyns',
     'welcome' => 'Welcome to ',
     'inside_welcome' => 'Manage your invoices, reports, and much more from a single platform.',
-    'add_invoice' => 'Add an invoice',
-    'view_invoices' => 'View invoices',
+    'add_invoice' => 'Add an Invoice',
+    'view_invoices' => 'View Invoices',
     'create_order' => 'Create Purchase Order',
 
-    //index invoice
+    // Invoice / Purchase Order Details
     'invoice_details_title' => 'Purchase Order Details | DocuSyns',
     'invoice_details' => 'Purchase Order Details',
     'reference_commande' => 'Order Reference',
@@ -37,18 +38,11 @@ return [
     'back' => 'Back',
     'edit' => 'Edit',
 
+    // Template / Upload
+    'new_template' => 'New Template',
+    'back_to_upload' => 'Back to Upload',
 
-    'new_template' => 'New template',
-    'back_to_upload' => 'Back to upload',
-
-
-
-
-
-
-
-
-
+    // Common Buttons
     'home' => 'Home',
     'return' => 'Return',
     'submit' => 'Submit',
@@ -68,7 +62,7 @@ return [
     'logout' => 'Logout',
     'login' => 'Login',
 
-    // Invoice/Purchase Order
+    // Purchase Orders
     'purchase_orders' => 'Purchase Orders',
     'create_purchase_order' => 'Create Purchase Order',
     'modify_purchase_order' => 'Modify Purchase Order Data',
@@ -87,19 +81,19 @@ return [
     'supplier_code' => 'Supplier Code',
     'ordered_by' => 'Ordered By',
     'ordered_to' => 'Ordered To',
-    'amount_ht' => 'Amount HT (DH)',
-    'amount_tva' => 'Amount VAT (DH)',
-    'amount_ttc' => 'Amount TTC (DH)',
+    'amount_ht' => 'Amount (Excl. Tax)',
+    'amount_tva' => 'VAT Amount',
+    'amount_ttc' => 'Total Amount (Incl. Tax)',
     'upload_file' => 'Upload File (Image or PDF)',
     'associated_file' => 'Associated File',
 
+    // Profile
     'profile_edit_title' => 'Edit My Profile',
     'profile_edit_page' => 'User Profile',
     'edit_info' => 'Edit My Information',
-
     'new_password_optional' => 'New Password (optional)',
 
-    // Auth
+    // Authentication
     'email' => 'Email Address',
     'password' => 'Password',
     'remember_me' => 'Remember Me',
@@ -107,7 +101,7 @@ return [
     'new_password' => 'New Password (optional)',
     'confirm_password' => 'Confirm Password',
 
-    // Profile
+    // Profile Details
     'edit_profile' => 'Edit Profile',
     'my_profile' => 'My Profile',
     'account_info' => 'Account Information',
@@ -123,7 +117,7 @@ return [
     'contact_admin' => 'Send a message to the administration team',
 
     // Messages
-    'field_not_found' => ':field not found in the purchase order',
-    'success' => 'Operation successful',
-    'error' => 'An error occurred',
+    'field_not_found' => ':field not found in the purchase order.',
+    'success' => 'Operation successful.',
+    'error' => 'An error occurred.',
 ];

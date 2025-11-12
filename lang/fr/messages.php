@@ -13,10 +13,11 @@ return [
     // General
     'welcome_page' => 'Bienvenue | DocuSyns',
     'welcome' => 'Bienvenue sur',
-    'inside_welcome' => 'Gérez vos factures, vos rapports et bien plus encore depuis une seule plateforme.',
-    'add_invoice' => 'Ajouter une facture',
-    'view_invoices' => 'Voir les factures',
-    'create_order' => 'Créer Bon de commande',
+    'inside_welcome' => 'Gérez vos bons de commande, vos rapports et bien plus encore depuis une seule plateforme.',
+    'add_invoice' => 'Ajouter un bon de commande',
+    'view_invoices' => 'Voir les bons de commande',
+    'create_order' => 'Créer un bon de commande',
+
     // index invoice
     'invoice_details_title' => 'Détails du bon de commande | DocuSyns',
     'invoice_details' => 'Détails du bon de commande',
@@ -34,15 +35,10 @@ return [
     'new_template' => 'Nouveau modèle',
     'back_to_upload' => 'Retour au téléchargement',
 
-
     'profile_edit_title' => 'Modifier mon profil',
     'profile_edit_page' => 'Profil utilisateur',
     'edit_info' => 'Modifier mes informations',
     'new_password_optional' => 'Nouveau mot de passe (optionnel)',
-
-
-
-
 
     'home' => 'Accueil',
     'back' => 'Retour',
@@ -66,12 +62,12 @@ return [
     'login' => 'Connexion',
 
     // Invoice/Purchase Order
-    'purchase_orders' => 'Bon de commande',
-    'create_purchase_order' => 'Créer Bon de commande',
-    'modify_purchase_order' => 'Modifier les données de la Bon de commande',
-    'purchase_order_details' => 'Détails de la Bon de commande',
-    'back_to_invoices' => 'Retour aux Factures',
-    'no_invoices' => 'Aucune facture trouvée',
+    'purchase_orders' => 'Bons de commande',
+    'create_purchase_order' => 'Créer un bon de commande',
+    'modify_purchase_order' => 'Modifier les données du bon de commande',
+    'purchase_order_details' => 'Détails du bon de commande',
+    'back_to_invoices' => 'Retour aux bons de commande',
+    'no_invoices' => 'Aucun bon de commande trouvé',
     'add_automatic' => 'Ajouter automatiquement (par image ou fichier)',
     'confirm_delete' => 'Supprimer cette commande ?',
     'verify_data' => 'Vérifiez les données avant d\'enregistrer',

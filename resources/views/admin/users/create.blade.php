@@ -41,7 +41,9 @@
                 required>
                 <option value="">{{ __('user.select_role') }}</option>
                 <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>{{ __('user.role_user') }}</option>
+                @can('isSuperAdmin')
                 <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>{{ __('user.role_admin') }}</option>
+                @endcan
             </select>
             @error('role') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
         </div>

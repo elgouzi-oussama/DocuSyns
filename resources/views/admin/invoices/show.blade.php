@@ -4,7 +4,7 @@
 @section('page_title', __('invoice.show.page_title', ['id' => $invoice->id]))
 
 @section('content')
-<div class="bg-white p-6 rounded-lg shadow-sm max-w-2xl mx-auto {{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
+<div class="bg-white p-6 rounded-lg shadow-sm max-w-5xl mx-auto {{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 
     @if(session('success'))
     <div class="mb-4 bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded">
@@ -85,7 +85,51 @@
                 </a>
             </p>
             @endif
+            {{-- 🔹 Button to show Articles --}}
+
+
+
+
         </div>
+
+
+        @if($invoice->articles)
+        <div class="mt-6 text-start  ">
+            <!-- <button id="show-articles"
+                    class="bg-gray-300 text-black px-3 p-2 hover:bg-gray-700 hover:text-white  rounded-lg">
+                    📄 Voir les articles
+                </button> -->
+        </div>
+
+
+        <div>
+            <h2 class="text-xl font-bold mb-4">Articles</h2>
+
+            <table class="min-w-full border border-gray-300 text-sm">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        @foreach(array_keys($invoice->articles[0] ?? []) as $key)
+                        <th class="px-3 py-2 border-b">{{ $key }}</th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($invoice->articles as $item)
+                    <tr class="hover:bg-gray-50">
+                        @foreach($item as $value)
+                        <td class="px-3 py-2 border-b">{{ $value }}</td>
+                        @endforeach
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <!-- <div class="text-right mt-4">
+                    <button id="close-modal" class="bg-gray-600 text-white px-4 py-2 rounded-lg">Fermer</button>
+                </div> -->
+        </div>
+        @endif
+
 
         {{-- Admin Buttons --}}
 
@@ -155,4 +199,21 @@
         @endcannot
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const showButton = document.getElementById("show-articles");
+        const modal = document.getElementById("articles-modal");
+        const closeBtn = document.getElementById("close-modal");
+
+        if (showButton && modal && closeBtn) {
+            showButton.addEventListener("click", () => {
+                modal.classList.remove("hidden");
+            });
+
+            closeBtn.addEventListener("click", () => {
+                modal.classList.add("hidden");
+            });
+        }
+    });
+</script>
 @endsection

@@ -147,6 +147,42 @@
                 @endif
 
                 <input type="hidden" name="file" value="{{ $allData['file'] }}">
+                <input type="hidden" name="articles" value='@json($allData["items"])'>
+            </div>
+
+            <div class="p-0">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-left border-collapse">
+                        <thead class="bg-gray-800 text-white">
+                            <tr>
+                                @foreach(array_keys($allData['items'][0]) as $key)
+                                <th class="px-4 py-3">
+                                    {{ $key }}
+                                </th>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            @forelse($allData['items'] as $item)
+                            <tr class="hover:bg-gray-50">
+                                @foreach($item as $key => $value)
+                                <td class="px-4 py-2 text-center">
+                                    {{ $value }}
+                                </td>
+                                @endforeach
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="10" class="px-4 py-6 text-center text-gray-500 italic">
+                                    Aucun article trouvé
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+
+
+                    </table>
+                </div>
             </div>
 
             <div class="pt-6 flex justify-between">

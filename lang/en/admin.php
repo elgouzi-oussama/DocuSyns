@@ -1,28 +1,33 @@
 <?php
+
 return [
     'currency' => 'MAD',
     'title' => 'Admin Panel',
     'logout' => 'Logout',
+
     'sidebar' => [
         'licenses' => 'Licenses',
         'title' => 'Admin',
         'dashboard' => 'Dashboard',
-        'invoices' => 'Invoices',
+        'invoices' => 'Purchase Orders',
         'users' => 'Users',
         'settings' => 'Settings',
     ],
-    "dashboard" => [
+
+    'dashboard' => [
         'page_title' => 'Dashboard',
-        'welcome_title' => 'Welcome to the admin area 👋',
-        'welcome_text' => 'Here you can manage your requests, users, and more.',
+        'welcome_title' => 'Welcome to the Admin Area 👋',
+        'welcome_text' => 'Here you can manage your purchase orders, users, and more.',
         'purchase_orders' => 'Purchase Orders',
         'users' => 'Users',
     ],
+
     'dashboard_title' => 'Admin Dashboard',
     'change_password_title' => 'Change Password',
     'new_password' => 'New Password',
     'confirm_password' => 'Confirm Password',
     'change_button' => 'Update',
+
     'profile' => [
         'title' => 'Admin Profile',
         'page_title' => 'My Profile',
@@ -35,6 +40,7 @@ return [
         'back' => 'Back',
         'edit' => 'Edit Profile',
     ],
+
     'profile_edit' => [
         'title' => 'Edit Profile',
         'page_title' => 'Administrator Profile',
@@ -46,11 +52,12 @@ return [
         'back' => 'Back',
         'save' => 'Save',
     ],
+
     'auth' => [
         'invalid_credentials' => 'Invalid email or password.',
-        'access_denied' => 'Access denied. Admin only.',
+        'access_denied' => 'Access denied. Admins only.',
         'password_changed' => 'Password changed successfully.',
-        'logout_success' => 'Logout successful.',
+        'logout_success' => 'Logged out successfully.',
         'validation' => [
             'email_required' => 'The email field is required.',
             'email_invalid' => 'Please enter a valid email address.',
@@ -58,23 +65,24 @@ return [
             'password_min' => 'The password must be at least 8 characters.',
         ],
     ],
+
     'invoice' => [
-        'reference_exists' => 'This order reference already exists.',
-        'created_success' => 'Invoice successfully created.',
-        'updated_success' => 'Invoice successfully updated.',
-        'deleted_success' => 'Invoice successfully deleted.',
-        'approved_success' => 'Invoice approved successfully.',
-        'rejected_success' => 'Invoice rejected successfully.',
+        'reference_exists' => 'This purchase order reference already exists.',
+        'created_success' => 'Purchase order created successfully.',
+        'updated_success' => 'Purchase order updated successfully.',
+        'deleted_success' => 'Purchase order deleted successfully.',
+        'approved_success' => 'Purchase order approved successfully.',
+        'rejected_success' => 'Purchase order rejected successfully.',
         'validation' => [
             'user_required' => 'The user field is required.',
             'user_exists' => 'The selected user does not exist.',
             'file_required' => 'The file field is required.',
-            'file_type' => 'The file must be valid.',
+            'file_type' => 'The uploaded file must be valid.',
             'file_mimes' => 'The file must be an image or PDF (jpg, jpeg, png, bmp, tiff, pdf).',
-            'file_max' => 'The file size may not exceed 5 MB.',
+            'file_max' => 'The file size must not exceed 5 MB.',
             'status_required' => 'The status field is required.',
             'status_invalid' => 'The selected status is invalid.',
-            'reference_commande_required' => 'The order reference is required.',
+            'reference_commande_required' => 'The purchase order reference is required.',
             'date_commande_required'      => 'The order date is required.',
             'nom_fournisseur_required'    => 'The supplier name is required.',
             'commande_par_required'       => 'The "ordered by" field is required.',
@@ -87,6 +95,7 @@ return [
             'user_id_exists'              => 'The selected user does not exist.',
         ],
     ],
+
     'user' => [
         'access_denied' => 'Access denied.',
         'name_required' => 'Name is required.',
@@ -96,6 +105,7 @@ return [
         'password_min' => 'Password must be at least 6 characters.',
         'password_confirmed' => 'Password confirmation does not match.',
         'profile_updated' => 'Profile updated successfully.',
+
         'validation' => [
             'name_required'     => 'The name is required.',
             'email_required'    => 'The email is required.',
@@ -107,14 +117,15 @@ return [
             'role_required'     => 'The role is required.',
             'role_in'           => 'The selected role is invalid.',
         ],
+
         'errors' => [
             'not_authorized' => 'You are not authorized to assign this role.',
             'no_license_attached' => '❌ No license found for your account.',
             'admin_limit_reached' => '❌ You have reached the maximum number of admins (:max) allowed by your license.',
             'user_limit_reached' => '❌ You have reached the maximum number of users (:max) allowed by your license.',
             'total_limit_reached' => '❌ You cannot create more than :max accounts under your current license.',
-
         ],
+
         'success' => [
             'created' => 'User created successfully.',
             'updated' => 'User updated successfully.',

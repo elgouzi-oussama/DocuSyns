@@ -3,27 +3,30 @@ return [
     'currency' => 'DH',
     'title' => 'Panneau d’administration',
     'logout' => 'Déconnexion',
-    'sidebar' => [
 
+    'sidebar' => [
         'title' => 'Admin',
         'licenses' => 'Licences',
         'dashboard' => 'Tableau de bord',
-        'invoices' => 'Factures',
+        'invoices' => 'Bons de commande',
         'users' => 'Utilisateurs',
         'settings' => 'Paramètres',
     ],
-    "dashboard" => [
+
+    'dashboard' => [
         'page_title' => 'Tableau de bord',
         'welcome_title' => 'Bienvenue dans l’espace administrateur 👋',
-        'welcome_text' => 'Ici vous pouvez gérer vos demandes, utilisateurs et plus encore.',
+        'welcome_text' => 'Ici, vous pouvez gérer vos bons de commande, utilisateurs et bien plus encore.',
         'purchase_orders' => 'Bons de commande',
         'users' => 'Utilisateurs',
     ],
+
     'dashboard_title' => 'Tableau de bord',
     'change_password_title' => 'Changer le mot de passe',
     'new_password' => 'Nouveau mot de passe',
     'confirm_password' => 'Confirmer le mot de passe',
     'change_button' => 'Changer',
+
     'profile' => [
         'title' => 'Profil Administrateur',
         'page_title' => 'Mon Profil',
@@ -36,6 +39,7 @@ return [
         'back' => 'Retour',
         'edit' => 'Modifier le profil',
     ],
+
     'profile_edit' => [
         'title' => 'Modifier le profil',
         'page_title' => 'Profil Administrateur',
@@ -47,11 +51,13 @@ return [
         'back' => 'Retour',
         'save' => 'Sauvegarder',
     ],
+
     'auth' => [
         'invalid_credentials' => 'Identifiants invalides.',
         'access_denied' => 'Accès refusé. Administrateur uniquement.',
         'password_changed' => 'Mot de passe changé avec succès.',
         'logout_success' => 'Déconnexion réussie.',
+
         'validation' => [
             'email_required' => 'L’adresse e-mail est obligatoire.',
             'email_invalid' => 'L’adresse e-mail n’est pas valide.',
@@ -59,13 +65,15 @@ return [
             'password_min' => 'Le mot de passe doit contenir au moins 8 caractères.',
         ],
     ],
-    "invoice" => [
+
+    'invoice' => [
         'reference_exists' => 'Cette référence de commande existe déjà.',
-        'created_success' => 'Facture enregistrée avec succès.',
-        'updated_success' => 'Facture mise à jour avec succès.',
-        'deleted_success' => 'Facture supprimée avec succès.',
-        'approved_success' => 'Facture approuvée avec succès.',
-        'rejected_success' => 'Facture rejetée avec succès.',
+        'created_success' => 'Bon de commande enregistré avec succès.',
+        'updated_success' => 'Bon de commande mis à jour avec succès.',
+        'deleted_success' => 'Bon de commande supprimé avec succès.',
+        'approved_success' => 'Bon de commande approuvé avec succès.',
+        'rejected_success' => 'Bon de commande rejeté avec succès.',
+
         'validation' => [
             'user_required' => "L'utilisateur est obligatoire.",
             'user_exists' => "L'utilisateur sélectionné n'existe pas.",
@@ -76,18 +84,19 @@ return [
             'status_required' => 'Le statut est obligatoire.',
             'status_invalid' => 'Le statut sélectionné est invalide.',
             'reference_commande_required' => 'La référence de commande est obligatoire.',
-            'date_commande_required'      => 'La date de commande est obligatoire.',
-            'nom_fournisseur_required'    => 'Le nom du fournisseur est obligatoire.',
-            'commande_par_required'       => 'Le champ "Commandé par" est obligatoire.',
-            'commande_a_required'         => 'Le champ "Commandé à" est obligatoire.',
-            'montant_ht_required'         => 'Le montant HT est obligatoire.',
-            'montant_tva_required'        => 'Le montant TVA est obligatoire.',
-            'montant_ttc_required'        => 'Le montant TTC est obligatoire.',
-            'statut_required'             => 'Le statut est obligatoire.',
-            'user_id_required'            => 'L’utilisateur est obligatoire.',
-            'user_id_exists'              => 'L’utilisateur sélectionné n’existe pas.',
+            'date_commande_required' => 'La date de commande est obligatoire.',
+            'nom_fournisseur_required' => 'Le nom du fournisseur est obligatoire.',
+            'commande_par_required' => 'Le champ "Commandé par" est obligatoire.',
+            'commande_a_required' => 'Le champ "Commandé à" est obligatoire.',
+            'montant_ht_required' => 'Le montant HT est obligatoire.',
+            'montant_tva_required' => 'Le montant TVA est obligatoire.',
+            'montant_ttc_required' => 'Le montant TTC est obligatoire.',
+            'statut_required' => 'Le statut est obligatoire.',
+            'user_id_required' => 'L’utilisateur est obligatoire.',
+            'user_id_exists' => 'L’utilisateur sélectionné n’existe pas.',
         ],
     ],
+
     'user' => [
         'access_denied' => 'Accès refusé.',
         'name_required' => 'Le nom est obligatoire.',
@@ -97,25 +106,27 @@ return [
         'password_min' => 'Le mot de passe doit contenir au moins 6 caractères.',
         'password_confirmed' => 'La confirmation du mot de passe ne correspond pas.',
         'profile_updated' => 'Profil mis à jour avec succès.',
+
         'validation' => [
-            'name_required'     => 'Le nom est obligatoire.',
-            'email_required'    => 'L\'adresse e-mail est obligatoire.',
-            'email_email'       => 'Veuillez entrer une adresse e-mail valide.',
-            'email_unique'      => 'Cette adresse e-mail est déjà utilisée.',
+            'name_required' => 'Le nom est obligatoire.',
+            'email_required' => 'L’adresse e-mail est obligatoire.',
+            'email_email' => 'Veuillez entrer une adresse e-mail valide.',
+            'email_unique' => 'Cette adresse e-mail est déjà utilisée.',
             'password_required' => 'Le mot de passe est obligatoire.',
             'password_confirmed' => 'La confirmation du mot de passe ne correspond pas.',
-            'password_min'      => 'Le mot de passe doit contenir au moins 8 caractères.',
-            'role_required'     => 'Le rôle est obligatoire.',
-            'role_in'           => 'Le rôle sélectionné est invalide.',
+            'password_min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'role_required' => 'Le rôle est obligatoire.',
+            'role_in' => 'Le rôle sélectionné est invalide.',
         ],
-        'errors' => [
-            'not_authorized' => 'Vous n\'êtes pas autorisé à attribuer ce rôle.',
-            'no_license_attached' => '❌ Aucune licence trouvée pour votre compte.',
-            'admin_limit_reached' => '❌ Vous avez atteint le nombre maximal d’administrateurs (:max) autorisés par votre licence.',
-            'user_limit_reached' => '❌ Vous avez atteint le nombre maximal d’utilisateurs (:max) autorisés par votre licence.',
-            'total_limit_reached' => '❌ Vous ne pouvez pas créer plus de :max comptes avec votre licence actuelle.',
 
+        'errors' => [
+            'not_authorized' => 'Vous n’êtes pas autorisé à attribuer ce rôle.',
+            'no_license_attached' => '❌ Aucune licence trouvée pour votre compte.',
+            'admin_limit_reached' => '❌ Nombre maximal d’administrateurs (:max) atteint pour votre licence.',
+            'user_limit_reached' => '❌ Nombre maximal d’utilisateurs (:max) atteint pour votre licence.',
+            'total_limit_reached' => '❌ Vous ne pouvez pas créer plus de :max comptes avec votre licence actuelle.',
         ],
+
         'success' => [
             'created' => 'Utilisateur créé avec succès.',
             'updated' => 'Utilisateur modifié avec succès.',

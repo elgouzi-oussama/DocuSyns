@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Services\InvoiceExtractorService;
+use App\Services\InvoiceParserForArticles;
 use App\Services\InvoiceParserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -93,65 +94,84 @@ class InvoiceController extends Controller
         ]);
 
         $file = $request->file('file');
-        $extension = strtolower($file->getClientOriginalExtension());
-        $relativePath = null;
-        $text = '';
-        $allData = null;
+        $relativePath = $file->store('invoice', 'public');
+        $originalPath = storage_path('app/public/' . $relativePath);
 
-        if ($extension === 'pdf') {
-            try {
-                $parser = new Parser();
-                $pdf = $parser->parseFile($file);
-                $text = $pdf->getText();
-                $allData = $extractor->parseAll($text);
-                // ✅ Convert first page of PDF to image
-                $imagick = new Imagick();
-                $imagick->setResolution(300, 300);
-                $imagick->readImage($file->getPathname() . '[0]'); // first page only
-                $imagick->setImageFormat('jpg');
-
-                // Generate unique filename
-                $imageName = 'invoice/' . uniqid('invoice_') . '.jpg';
-
-                // Get the full path for storage
-                $fullPath = Storage::disk('public')->path($imageName);
-
-                // Ensure the directory exists
-                $directory = dirname($fullPath);
-                if (!file_exists($directory)) {
-                    mkdir($directory, 0755, true);
-                }
-
-                // Write the image to disk
-                $imagick->writeImage($fullPath);
-                $imagick->clear();
-                $imagick->destroy();
-
-                // Set relative path for database
-                $relativePath = $imageName;
-
-                // OCR from the generated image
-                $text = (new TesseractOCR($fullPath))
-                    ->executable(config('services.tesseract.path'))
-                    ->lang(config('services.tesseract.langs'))
-                    ->run();
-            } catch (\Exception $e) {
-                $text = 'Error converting PDF: ' . $e->getMessage();
-            }
+        // Handle PDF conversion to image
+        if ($file->getClientOriginalExtension() === 'pdf') {
+            $parser = new Parser();
+            $pdf = $parser->parseFile($originalPath);
+            $text = $pdf->getText();
+            // dd($text);
         } else {
-            // ✅ Image file → save & OCR
-            $relativePath = $file->store('invoice', 'public');
-            $fullPath = Storage::disk('public')->path($relativePath);
+            // orc 
+            $ocr = (new TesseractOCR($originalPath))
+                ->executable(config('services.tesseract.path'))
+                ->lang(config('services.tesseract.langs'));
 
-            try {
-                $text = (new TesseractOCR($fullPath))
-                    ->executable(config('services.tesseract.path'))
-                    ->lang(config('services.tesseract.langs'))
-                    ->run();
-            } catch (\Exception $e) {
-                $text = 'Error running OCR: ' . $e->getMessage();
-            }
+            $text = $ocr->run();
         }
+
+        // $file = $request->file('file');
+        // $extension = strtolower($file->getClientOriginalExtension());
+        // $relativePath = null;
+        // $text = '';
+        // $allData = null;
+
+        // if ($extension === 'pdf') {
+        //     try {
+        //         $parser = new Parser();
+        //         $pdf = $parser->parseFile($file);
+        //         $text = $pdf->getText();
+        //         $allData = $extractor->parseAll($text);
+        //         // ✅ Convert first page of PDF to image
+        //         $imagick = new Imagick();
+        //         $imagick->setResolution(300, 300);
+        //         $imagick->readImage($file->getPathname() . '[0]'); // first page only
+        //         $imagick->setImageFormat('jpg');
+
+        //         // Generate unique filename
+        //         $imageName = 'invoice/' . uniqid('invoice_') . '.jpg';
+
+        //         // Get the full path for storage
+        //         $fullPath = Storage::disk('public')->path($imageName);
+
+        //         // Ensure the directory exists
+        //         $directory = dirname($fullPath);
+        //         if (!file_exists($directory)) {
+        //             mkdir($directory, 0755, true);
+        //         }
+
+        //         // Write the image to disk
+        //         $imagick->writeImage($fullPath);
+        //         $imagick->clear();
+        //         $imagick->destroy();
+
+        //         // Set relative path for database
+        //         $relativePath = $imageName;
+
+        //         // OCR from the generated image
+        //         $text = (new TesseractOCR($fullPath))
+        //             ->executable(config('services.tesseract.path'))
+        //             ->lang(config('services.tesseract.langs'))
+        //             ->run();
+        //     } catch (\Exception $e) {
+        //         $text = 'Error converting PDF: ' . $e->getMessage();
+        //     }
+        // } else {
+        //     // ✅ Image file → save & OCR
+        //     $relativePath = $file->store('invoice', 'public');
+        //     $fullPath = Storage::disk('public')->path($relativePath);
+
+        //     try {
+        //         $text = (new TesseractOCR($fullPath))
+        //             ->executable(config('services.tesseract.path'))
+        //             ->lang(config('services.tesseract.langs'))
+        //             ->run();
+        //     } catch (\Exception $e) {
+        //         $text = 'Error running OCR: ' . $e->getMessage();
+        //     }
+        // }
         // $allData = $extractors->extractFields($text);
         if (empty($allData)) {
             $allData = $extractor->parseAll($text);
@@ -159,7 +179,11 @@ class InvoiceController extends Controller
                 $allData['montant_ttc'] = $allData['montant_ht'];
             }
         }
+        $lines = explode("\n", $text);
+        $parserai = new InvoiceParserForArticles();
+        $articles = $parserai->parse($lines);
 
+        $allData['items'] = $articles;
         $allData['file'] = $relativePath;
 
         if (Invoice::where('reference_commande', $allData['reference_commande'])->exists()) {
@@ -173,6 +197,8 @@ class InvoiceController extends Controller
     {
         $data = $request->except('_token');
         $data['user_id'] = Auth::id();
+        $data['articles'] = json_decode($request->input('articles'), true);
+
 
         $normalize = fn($v) => isset($v) ? floatval(str_replace([' ', ','], ['', '.'], $v)) : null;
         if (isset($data['montant_ht'])) {

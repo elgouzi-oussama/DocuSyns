@@ -10,7 +10,7 @@
 </div>
 @endif
 
-<div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-4xl">
+<div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-5xl">
     <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center select-none">
         {{ __('invoice.confirm.heading') }}
     </h1>
@@ -165,6 +165,42 @@
                 <input type="hidden" name="file" value="{{ $allData['file'] }}">
                 <input type="hidden" name="user_id" value="{{ $allData['user_id'] }}">
                 <input type="hidden" name="statut" value="{{ $allData['statut'] }}">
+                <input type="hidden" name="articles" value='@json($allData["items"])'>
+            </div>
+
+            <div class="p-0">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-left border-collapse">
+                        <thead class="bg-gray-800 text-white">
+                            <tr>
+                                @foreach(array_keys($allData['items'][0]) as $key)
+                                <th class="px-4 py-3">
+                                    {{ $key }}
+                                </th>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            @forelse($allData['items'] as $item)
+                            <tr class="hover:bg-gray-50">
+                                @foreach($item as $key => $value)
+                                <td class="px-4 py-2 text-center">
+                                    {{ $value }}
+                                </td>
+                                @endforeach
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="10" class="px-4 py-6 text-center text-gray-500 italic">
+                                    Aucun article trouvé
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+
+
+                    </table>
+                </div>
             </div>
 
 

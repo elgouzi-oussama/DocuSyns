@@ -4,22 +4,22 @@ return [
     'page_title' => 'Vérifiez les données avant d’enregistrer',
     'heading' => 'Vérifiez les données avant d’enregistrer',
 
-    'reference' => 'Référence Commande',
+    'reference' => 'Référence commande',
     'reference_missing' => 'Référence commande introuvable dans le bon de commande.',
 
-    'date' => 'Date Commande',
+    'date' => 'Date commande',
     'date_missing' => 'Date commande introuvable dans le bon de commande.',
 
-    'supplier_name' => 'Nom Fournisseur',
-    'supplier_missing' => 'Nom fournisseur introuvable dans le bon de commande.',
+    'supplier_name' => 'Nom du fournisseur',
+    'supplier_missing' => 'Nom du fournisseur introuvable dans le bon de commande.',
 
-    'supplier_code' => 'Code Fournisseur',
+    'supplier_code' => 'Code fournisseur',
     'supplier_code_missing' => 'Code fournisseur introuvable dans le bon de commande.',
 
-    'ordered_by' => 'Commandé Par',
+    'ordered_by' => 'Commandé par',
     'ordered_by_missing' => 'Champ "Commandé par" introuvable dans le bon de commande.',
 
-    'ordered_to' => 'Commandé À',
+    'ordered_to' => 'Commandé à',
     'ordered_to_missing' => 'Champ "Commandé à" introuvable dans le bon de commande.',
 
     'amount_ht' => 'Montant HT (DH)',
@@ -32,5 +32,5 @@ return [
     'amount_ttc_missing' => 'Montant TTC introuvable dans le bon de commande.',
 
     'back' => 'Retour',
-    'confirm_and_save' => 'Confirmer et Enregistrer',
+    'confirm_and_save' => 'Confirmer et enregistrer',
 ];

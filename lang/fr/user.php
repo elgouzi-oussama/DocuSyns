@@ -13,6 +13,7 @@ return [
     'role_admin' => 'Administrateur',
     'cancel' => 'Annuler',
     'save' => 'Enregistrer',
+
     'edit' => [
         'title' => 'Modifier utilisateur',
         'page_title' => 'Modifier utilisateur',
@@ -27,17 +28,17 @@ return [
         'cancel' => 'Annuler',
         'update' => 'Mettre à jour',
         'manage_permissions' => 'Modifier les permissions',
-        'invoice_permissions' => 'Permissions - Bons de commande',
+        'order_permissions' => 'Permissions - Bons de commande',
         'user_permissions' => 'Permissions - Utilisateurs',
 
         'perms' => [
-            'view_invoices' => 'Voir la liste des bons de commande',
-            'show_invoice' => 'Afficher un bon de commande',
-            'create_invoice' => 'Créer un bon de commande',
-            'edit_invoice' => 'Modifier un bon de commande',
-            'delete_invoice' => 'Supprimer un bon de commande',
-            'approve_invoice' => 'Approuver un bon de commande',
-            'reject_invoice' => 'Rejeter un bon de commande',
+            'view_orders' => 'Voir la liste des bons de commande',
+            'show_order' => 'Afficher un bon de commande',
+            'create_order' => 'Créer un bon de commande',
+            'edit_order' => 'Modifier un bon de commande',
+            'delete_order' => 'Supprimer un bon de commande',
+            'approve_order' => 'Approuver un bon de commande',
+            'reject_order' => 'Rejeter un bon de commande',
 
             'view_users' => 'Voir la liste des utilisateurs',
             'show_user' => 'Afficher un utilisateur',
@@ -46,6 +47,7 @@ return [
             'delete_user' => 'Supprimer un utilisateur',
         ],
     ],
+
     'list' => [
         'title' => 'Liste des utilisateurs',
         'page_title' => 'Gestion des utilisateurs',
@@ -59,9 +61,10 @@ return [
         'edit' => 'Modifier',
         'delete' => 'Supprimer',
         'show' => 'Voir',
-        'delete_confirm' => 'Êtes-vous sûr de vouloir supprimer cet utilisateur ? Si cet utilisateur a créé des factures, elles seront aussi supprimées.',
+        'delete_confirm' => 'Êtes-vous sûr de vouloir supprimer cet utilisateur ? Si cet utilisateur a créé des bons de commande, ils seront aussi supprimés.',
         'no_users' => 'Aucun utilisateur trouvé.',
     ],
+
     'show' => [
         'title' => 'Détails utilisateur',
         'page_title' => 'Détails de l’utilisateur',

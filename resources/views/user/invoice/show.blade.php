@@ -115,6 +115,42 @@
                     </a>
                 </div>
                 @endif
+                @if($invoice->articles)
+                <div class="mt-6 text-start  ">
+                    <!-- <button id="show-articles"
+                    class="bg-gray-300 text-black px-3 p-2 hover:bg-gray-700 hover:text-white  rounded-lg">
+                    📄 Voir les articles
+                </button> -->
+                </div>
+
+
+                <div>
+                    <h2 class="text-xl font-bold mb-4">Articles</h2>
+
+                    <table class="min-w-full border border-gray-300 text-sm">
+                        <thead class="bg-gray-800 text-white">
+                            <tr>
+                                @foreach(array_keys($invoice->articles[0] ?? []) as $key)
+                                <th class="px-3 py-2 border-b">{{ $key }}</th>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($invoice->articles as $item)
+                            <tr class="hover:bg-gray-50">
+                                @foreach($item as $value)
+                                <td class="px-3 py-2 border-b">{{ $value }}</td>
+                                @endforeach
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                    <!-- <div class="text-right mt-4">
+                    <button id="close-modal" class="bg-gray-600 text-white px-4 py-2 rounded-lg">Fermer</button>
+                </div> -->
+                </div>
+                @endif
 
             </div>
 

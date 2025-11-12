@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'page_title' => 'Purchase Order',
-    'heading' => 'Purchase Order',
+    'page_title' => 'Purchase Orders',
+    'heading' => 'Purchase Orders',
     'back' => 'Back',
-    'add_auto' => 'Add Automatically (via image or file)',
+    'add_auto' => 'Add Automatically (via Image or File)',
     'reference' => 'Reference',
     'supplier' => 'Supplier',
     'date' => 'Date',
@@ -14,31 +14,34 @@ return [
     'edit' => 'Edit',
     'delete' => 'Delete',
     'delete_confirm' => 'Delete this order?',
-    'no_invoice' => 'No invoice found.',
+    'no_invoice' => 'No purchase orders found.',
 
     'messages' => [
-        'created' => 'Order saved successfully!',
-        'updated' => 'Invoice updated successfully!',
-        'deleted' => 'Invoice deleted successfully!',
+        'created' => 'Purchase order saved successfully!',
+        'updated' => 'Purchase order updated successfully!',
+        'deleted' => 'Purchase order deleted successfully!',
     ],
+
     'errors' => [
         'duplicate_reference' => 'This order reference already exists.',
-        'not_found' => 'Invoice not found.',
+        'not_found' => 'Purchase order not found.',
     ],
+
     'validation' => [
         'reference_commande_required' => 'Order reference is required.',
         'date_commande_required' => 'Order date is required.',
         'nom_fournisseur_required' => 'Supplier name is required.',
-        'file_required' => 'The file is required.',
+        'file_required' => 'A file is required.',
         'file_mimes' => 'The file must be one of: jpg, jpeg, png, bmp, tiff, pdf.',
         'file_max' => 'The file size must not exceed 5 MB.',
     ],
+
     'invoice_create' => [
-        'title' => 'Create Invoice',
-        'page_title' => 'New Invoice',
+        'title' => 'Create Purchase Order',
+        'page_title' => 'New Purchase Order',
 
         'user_label' => 'User',
-        'choose_user' => '-- Choose a user --',
+        'choose_user' => '-- Choose a User --',
 
         'status_label' => 'Status',
         'status' => [
@@ -51,9 +54,10 @@ return [
         'cancel' => 'Cancel',
         'save' => 'Save',
     ],
+
     'editt' => [
-        'page_title' => 'Edit Invoice',
-        'heading' => 'Edit Invoice',
+        'page_title' => 'Edit Purchase Order',
+        'heading' => 'Edit Purchase Order',
         'user' => 'User',
         'reference' => 'Order Reference',
         'date' => 'Order Date',
@@ -62,8 +66,8 @@ return [
         'ordered_by' => 'Ordered By',
         'ordered_to' => 'Ordered To',
         'amount_ht' => 'Amount (Excl. Tax)',
-        'amount_tva' => 'Tax Amount',
-        'amount_ttc' => 'Total Amount',
+        'amount_tva' => 'VAT Amount',
+        'amount_ttc' => 'Total Amount (Incl. Tax)',
         'status' => 'Status',
         'cancel' => 'Cancel',
         'update' => 'Update',
@@ -74,12 +78,13 @@ return [
         'approved' => 'Approved',
         'rejected' => 'Rejected',
     ],
+
     'index' => [
-        'title' => 'Invoices',
-        'page_title' => 'Invoices Dashboard',
-        'heading' => '📄 Invoices',
+        'title' => 'Purchase Orders',
+        'page_title' => 'Purchase Orders Dashboard',
+        'heading' => '📄 Purchase Orders',
         'back' => 'Back',
-        'add_auto' => 'Add automatically (by image or file)',
+        'add_auto' => 'Add Automatically (via Image or File)',
         'reference' => 'Reference',
         'supplier' => 'Supplier',
         'date' => 'Date',
@@ -89,15 +94,16 @@ return [
         'view' => 'View',
         'edit' => 'Edit',
         'delete' => 'Delete',
-        'confirm_delete' => 'Are you sure you want to delete this invoice?',
-        'empty' => 'No invoices found.',
+        'confirm_delete' => 'Are you sure you want to delete this purchase order?',
+        'empty' => 'No purchase orders found.',
         'total' => 'Total',
     ],
-    "show" => [
+
+    'show' => [
         'title' => 'Purchase Order #:id',
         'page_title' => 'Purchase Order #:id',
         'heading' => 'Purchase Order Details #:id',
-        'details_title' => 'Invoice Details',
+        'details_title' => 'Purchase Order Details',
         'view_file' => 'View File',
 
         'fields' => [
@@ -110,29 +116,32 @@ return [
             'ordered_by' => 'Ordered By',
             'ordered_to' => 'Ordered To',
             'amount_ht' => 'Amount (Excl. Tax)',
-            'amount_tva' => 'Tax Amount',
+            'amount_tva' => 'VAT Amount',
             'amount_ttc' => 'Total Amount (Incl. Tax)',
             'status' => 'Status',
             'created_at' => 'Created At',
             'file' => 'Attached File',
         ],
+
         'status' => [
             'approuvé' => 'Approved',
             'rejeté' => 'Rejected',
             'en_attente' => 'Pending',
         ],
+
         'actions' => [
             'approve' => 'Approve',
             'reject' => 'Reject',
             'edit' => 'Edit',
             'delete' => 'Delete',
             'back' => 'Back',
-            'confirm_delete' => 'Are you sure you want to delete this order?',
+            'confirm_delete' => 'Are you sure you want to delete this purchase order?',
         ],
     ],
+
     'confirm' => [
-        'page_title' => 'Confirm Invoice Data',
-        'heading' => 'Please verify all information before saving',
+        'page_title' => 'Confirm Purchase Order Data',
+        'heading' => 'Please Verify All Information Before Saving',
         'reference' => 'Order Reference',
         'date' => 'Order Date',
         'supplier' => 'Supplier Name',
@@ -150,21 +159,22 @@ return [
         'check_before_save' => 'Please review all fields before confirming.',
 
         'original_file' => 'Original File',
+
         'errors' => [
             'reference_missing' => 'Order reference is missing.',
             'date_missing' => 'Order date is missing.',
             'supplier_missing' => 'Supplier name is missing.',
             'supplier_code_missing' => 'Supplier code is missing.',
-            'commanded_by_missing' => 'Ordered by field is missing.',
-            'commanded_to_missing' => 'Ordered to field is missing.',
+            'commanded_by_missing' => 'Ordered By field is missing.',
+            'commanded_to_missing' => 'Ordered To field is missing.',
             'montant_ht_missing' => 'Amount (Excl. Tax) is missing.',
             'montant_tva_missing' => 'VAT Amount is missing.',
             'montant_ttc_missing' => 'Total Amount (Incl. Tax) is missing.',
         ],
+
         'buttons' => [
             'back' => 'Back',
             'confirm_save' => 'Confirm & Save',
         ],
     ],
-
 ];

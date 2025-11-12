@@ -6,11 +6,11 @@ use App\Models\User;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\InvoiceExtractorService;
+use App\Services\InvoiceParserForArticles;
 use App\Services\InvoiceParserService;
-use Illuminate\Support\Facades\Auth;
 use Smalot\PdfParser\Parser;
 use thiagoalessio\TesseractOCR\TesseractOCR;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -90,7 +90,6 @@ class AdminInvoiceController extends Controller implements HasMiddleware
             $parser = new Parser();
             $pdf = $parser->parseFile($originalPath);
             $text = $pdf->getText();
-            // dd($text);
         } else {
             // orc 
             $ocr = (new TesseractOCR($originalPath))
@@ -99,6 +98,22 @@ class AdminInvoiceController extends Controller implements HasMiddleware
 
             $text = $ocr->run();
         }
+        // dd($text);
+        // $parserai = new InvoiceExtractorService();
+        // $data = $parserai->extractFields($text);
+        // dd($data);
+
+        $lines = explode("\n", $text);
+        dd($lines);
+        $parserai = new InvoiceParserForArticles();
+        $articles = $parserai->parse($lines);
+        dd($articles);
+
+
+
+        // $articles = $this->extractArticles($text);
+        // dd($articles);
+
 
         // Extract all data at once
         $parser = new InvoiceParserService();
@@ -106,8 +121,10 @@ class AdminInvoiceController extends Controller implements HasMiddleware
         $allData['file'] = $relativePath;
         $allData['user_id'] = $validated['user_id'];
         $allData['statut'] = $validated['statut'];
+        $allData['items'] = $articles;
+        dd($allData);
         if (Invoice::where('reference_commande', $allData['reference_commande'])->exists()) {
-            return  redirect()->route('invoice.create')->with('error', __('admin.invoice.reference_exists'));
+            return  redirect()->route(userRoute('invoice.create'))->with('error', __('admin.invoice.reference_exists'));
         }
 
 
@@ -120,6 +137,7 @@ class AdminInvoiceController extends Controller implements HasMiddleware
     public function confirm(Request $request)
     {
         $data = $request->except('_token');
+        $data['articles'] = json_decode($request->input('articles'), true);
 
         $normalize = fn($v) => isset($v) ? floatval(str_replace([' ', ','], ['', '.'], $v)) : null;
         if (isset($data['montant_ht'])) {
@@ -135,32 +153,18 @@ class AdminInvoiceController extends Controller implements HasMiddleware
         }
 
 
-        // ✅ Check if reference already exists
-        if (Gate::allows('isAdmin')) {
-            if (Invoice::where('reference_commande', $data['reference_commande'])->exists()) {
-                return redirect()->route('admin.invoices.create')
-                    ->with('error', __('admin.invoice.reference_exists'));
-            }
 
-            $invoice = Invoice::create($data);
-            $invoice = $invoice['id'];
-
-            return redirect()->route('admin.invoices.show', compact('invoice'))
-                ->with('success', __('admin.invoice.created_success'));
-        } else {
-            if (Invoice::where('reference_commande', $data['reference_commande'])->exists()) {
-                return redirect()->route('super_admin.invoices.create')
-                    ->with('error', __('admin.invoice.reference_exists'));
-            }
-
-            $invoice = Invoice::create($data);
-            $invoice = $invoice['id'];
-
-            return redirect()->route('super_admin.invoices.show', compact('invoice'))
-                ->with('success', __('admin.invoice.created_success'));
+        if (Invoice::where('reference_commande', $data['reference_commande'])->exists()) {
+            return redirect()->route(userRoute('invoices.create'))
+                ->with('error', __('admin.invoice.reference_exists'));
         }
-    }
 
+        $invoice = Invoice::create($data);
+        $invoice = $invoice['id'];
+
+        return redirect()->route(userRoute('invoices.show'), compact('invoice'))
+            ->with('success', __('admin.invoice.created_success'));
+    }
 
 
     /**
@@ -231,13 +235,9 @@ class AdminInvoiceController extends Controller implements HasMiddleware
 
 
 
-        if (Gate::allows('isAdmin')) {
-            return redirect()->route('admin.invoices.show', $invoice->id)
-                ->with('success', __('admin.invoice.updated_success'));
-        } else {
-            return redirect()->route('super_admin.invoices.show', $invoice->id)
-                ->with('success', __('admin.invoice.updated_success'));
-        }
+
+        return redirect()->route(userRoute('invoices.show'), $invoice->id)
+            ->with('success', __('admin.invoice.updated_success'));
     }
 
     /**
@@ -248,7 +248,7 @@ class AdminInvoiceController extends Controller implements HasMiddleware
         $invoice = Invoice::findOrFail($id);
         $invoice->delete();
 
-        return redirect()->route('admin.invoices.index')
+        return redirect()->route(userRoute('invoices.index'))
             ->with('success', __('admin.invoice.deleted_success'));
     }
 
@@ -274,5 +274,71 @@ class AdminInvoiceController extends Controller implements HasMiddleware
 
         return redirect()->back()
             ->with('success', __('admin.invoice.rejected_success'));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function extractArticles(string $text): array
+    {
+        // dd($text);
+        $lines = explode("\n", $text);
+        $articles = [];
+        dd($lines);
+        foreach ($lines as $line) {
+            // Match lines that start with an article number (digits)
+            if (preg_match(
+                '/^(\d+)\s+([A-Za-z0-9\s\-\(\)\/]+?)\s+Piece\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d.]+)\s+([\d.]+)\s+Piece\s+([\d\s.]+)/',
+                $line,
+                $m
+            )) {
+                var_dump($m);
+                $articles[] = [
+                    'Article' => $m[1],
+                    'Libelle article' => trim($m[2]),
+                    'Type U.C.' => 'Piece',
+                    'VL' => '0',
+                    'No ligne' => $m[3],
+                    'UVC/UC' => '1',
+                    'Quant en UC' => $m[4],
+                    'Prix achat net' => $m[5],
+                    'Unite' => 'Piece',
+                    'Total prix achat net' => $m[6],
+                    'No. operation speciale' => ''
+                ];
+            }
+        }
+
+        return $articles;
     }
 }

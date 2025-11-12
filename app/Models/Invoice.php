@@ -20,8 +20,10 @@ class Invoice extends Model
         'commande_a',
         'file',
         'statut',
-
-
+        'articles',
+    ];
+    protected $casts = [
+        'articles' => 'array', // auto JSON encode/decode
     ];
 
     public function user()

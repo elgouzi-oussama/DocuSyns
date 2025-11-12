@@ -13,6 +13,7 @@ return [
     'role_admin' => 'Admin',
     'cancel' => 'Cancel',
     'save' => 'Save',
+
     'edit' => [
         'title' => 'Edit User',
         'page_title' => 'Edit User',
@@ -27,12 +28,12 @@ return [
         'cancel' => 'Cancel',
         'update' => 'Update',
         'manage_permissions' => 'Manage Permissions',
-        'invoice_permissions' => 'Permissions - Purchase Orders',
-        'user_permissions' => 'Permissions - Users',
+        'invoice_permissions' => 'Permissions — Purchase Orders',
+        'user_permissions' => 'Permissions — Users',
 
         'perms' => [
             'view_invoices' => 'View invoice list',
-            'show_invoice' => 'Show an invoice',
+            'show_invoice' => 'View an invoice',
             'create_invoice' => 'Create an invoice',
             'edit_invoice' => 'Edit an invoice',
             'delete_invoice' => 'Delete an invoice',
@@ -40,12 +41,13 @@ return [
             'reject_invoice' => 'Reject an invoice',
 
             'view_users' => 'View user list',
-            'show_user' => 'Show a user',
+            'show_user' => 'View a user',
             'create_user' => 'Create a user',
             'edit_user' => 'Edit a user',
             'delete_user' => 'Delete a user',
         ],
     ],
+
     'list' => [
         'title' => 'User List',
         'page_title' => 'User Management',
@@ -62,6 +64,7 @@ return [
         'delete_confirm' => 'Are you sure you want to delete this user? If the user created invoices, they will also be deleted.',
         'no_users' => 'No users found.',
     ],
+
     'show' => [
         'title' => 'User Details',
         'page_title' => 'User Details',

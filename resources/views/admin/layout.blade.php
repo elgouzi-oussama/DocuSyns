@@ -7,6 +7,7 @@
     <title>@yield('title', __('admin.title'))</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
+
     <style>
         /* RTL adjustments */
         [dir="rtl"] body {

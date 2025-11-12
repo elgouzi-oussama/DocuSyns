@@ -13,17 +13,17 @@ return [
     'view' => 'عرض',
     'edit' => 'تعديل',
     'delete' => 'حذف',
-    'delete_confirm' => 'هل أنت متأكد من حذف هذا الأمر؟',
-    'no_invoice' => 'لا توجد فواتير.',
+    'delete_confirm' => 'هل أنت متأكد من حذف هذا الطلب؟',
+    'no_commande' => 'لا توجد طلبات.',
 
     'messages' => [
         'created' => 'تم حفظ الطلب بنجاح!',
-        'updated' => 'تم تحديث الفاتورة بنجاح!',
-        'deleted' => 'تم حذف الفاتورة بنجاح!',
+        'updated' => 'تم تحديث الطلب بنجاح!',
+        'deleted' => 'تم حذف الطلب بنجاح!',
     ],
     'errors' => [
         'duplicate_reference' => 'مرجع الطلب هذا موجود بالفعل.',
-        'not_found' => 'الفاتورة غير موجودة.',
+        'not_found' => 'الطلب غير موجود.',
     ],
     'validation' => [
         'reference_commande_required' => 'مرجع الطلب مطلوب.',
@@ -33,9 +33,9 @@ return [
         'file_mimes' => 'يجب أن يكون الملف من الأنواع: jpg, jpeg, png, bmp, tiff, pdf.',
         'file_max' => 'يجب ألا يتجاوز حجم الملف 5 ميغابايت.',
     ],
-    'invoice_create' => [
-        'title' => 'إنشاء فاتورة',
-        'page_title' => 'فاتورة جديدة',
+    'commande_create' => [
+        'title' => 'إنشاء طلب',
+        'page_title' => 'طلب جديد',
 
         'user_label' => 'المستخدم',
         'choose_user' => '-- اختر مستخدمًا --',
@@ -44,7 +44,7 @@ return [
         'status' => [
             'pending' => 'قيد الانتظار',
             'approved' => 'تمت الموافقة',
-            'rejected' => 'مرفوضة',
+            'rejected' => 'مرفوض',
         ],
 
         'upload_label' => 'تحميل ملف (صورة أو PDF)',
@@ -52,8 +52,8 @@ return [
         'save' => 'حفظ',
     ],
     'editt' => [
-        'page_title' => 'تعديل الفاتورة',
-        'heading' => 'تعديل الفاتورة',
+        'page_title' => 'تعديل الطلب',
+        'heading' => 'تعديل الطلب',
         'user' => 'المستخدم',
         'reference' => 'مرجع الطلب',
         'date' => 'تاريخ الطلب',
@@ -75,9 +75,9 @@ return [
         'rejected' => 'مرفوض',
     ],
     'index' => [
-        'title' => 'الفواتير',
-        'page_title' => 'لوحة التحكم بالفواتير',
-        'heading' => '📄 الفواتير',
+        'title' => 'الطلبات',
+        'page_title' => 'لوحة التحكم بالطلبات',
+        'heading' => '📄 الطلبات',
         'back' => 'رجوع',
         'add_auto' => 'إضافة تلقائية (عن طريق الصورة أو الملف)',
         'reference' => 'المرجع',
@@ -89,15 +89,15 @@ return [
         'view' => 'عرض',
         'edit' => 'تعديل',
         'delete' => 'حذف',
-        'confirm_delete' => 'هل أنت متأكد من حذف هذه الفاتورة؟',
-        'empty' => 'لا توجد فواتير.',
+        'confirm_delete' => 'هل أنت متأكد من حذف هذا الطلب؟',
+        'empty' => 'لا توجد طلبات.',
         'total' => 'المجموع',
     ],
     "show" => [
-        'title' => 'أمر الشراء رقم :id',
-        'page_title' => 'أمر الشراء رقم :id',
-        'heading' => 'تفاصيل أمر الشراء رقم :id',
-        'details_title' => 'تفاصيل الفاتورة',
+        'title' => 'الطلب رقم :id',
+        'page_title' => 'الطلب رقم :id',
+        'heading' => 'تفاصيل الطلب رقم :id',
+        'details_title' => 'تفاصيل الطلب',
         'view_file' => 'عرض الملف',
 
         'fields' => [
@@ -131,7 +131,7 @@ return [
         ],
     ],
     'confirm' => [
-        'page_title' => 'تأكيد بيانات الفاتورة',
+        'page_title' => 'تأكيد بيانات الطلب',
         'heading' => 'يرجى التحقق من جميع المعلومات قبل الحفظ',
         'reference' => 'مرجع الطلب',
         'date' => 'تاريخ الطلب',

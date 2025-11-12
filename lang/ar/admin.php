@@ -7,7 +7,7 @@ return [
         'licenses' => 'التراخيص',
         'title' => 'الإدارة',
         'dashboard' => 'لوحة التحكم',
-        'invoices' => 'الفواتير',
+        'invoices' => 'الطلبات', // ✅ value changed
         'users' => 'المستخدمون',
         'settings' => 'الإعدادات',
     ],
@@ -58,13 +58,13 @@ return [
             'password_min' => 'يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل.',
         ],
     ],
-    "invoice" => [
-        'reference_exists' => 'رقم الطلب موجود بالفعل.',
-        'created_success' => 'تم إنشاء الفاتورة بنجاح.',
-        'updated_success' => 'تم تحديث الفاتورة بنجاح.',
-        'deleted_success' => 'تم حذف الفاتورة بنجاح.',
-        'approved_success' => 'تمت الموافقة على الفاتورة بنجاح.',
-        'rejected_success' => 'تم رفض الفاتورة بنجاح.',
+    "invoice" => [ // ✅ same key
+        'reference_exists' => 'رقم الطلب موجود بالفعل.', // ✅
+        'created_success' => 'تم إنشاء الطلب بنجاح.', // ✅
+        'updated_success' => 'تم تحديث الطلب بنجاح.', // ✅
+        'deleted_success' => 'تم حذف الطلب بنجاح.', // ✅
+        'approved_success' => 'تمت الموافقة على الطلب بنجاح.', // ✅
+        'rejected_success' => 'تم رفض الطلب بنجاح.', // ✅
         'validation' => [
             'user_required' => 'حقل المستخدم مطلوب.',
             'user_exists' => 'المستخدم المحدد غير موجود.',
@@ -113,7 +113,6 @@ return [
             'admin_limit_reached' => '❌ لقد وصلت إلى الحد الأقصى لعدد المدراء (:max) المسموح به في الترخيص.',
             'user_limit_reached' => '❌ لقد وصلت إلى الحد الأقصى لعدد المستخدمين (:max) المسموح به في الترخيص.',
             'total_limit_reached' => '❌ لا يمكنك إنشاء أكثر من :max حسابات ضمن الترخيص الحالي.',
-
         ],
         'success' => [
             'created' => 'تم إنشاء المستخدم بنجاح.',

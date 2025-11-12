@@ -65,8 +65,6 @@ class AdminUtilisateurController extends Controller implements HasMiddleware
         ]);
 
 
-
-
         if (Gate::allows('isTrial')) {
             $allowedUsers = 3;
             $allowedAdmins = 1;
@@ -81,7 +79,6 @@ class AdminUtilisateurController extends Controller implements HasMiddleware
         $currentUsers = User::where('role', 'user')->count();
         $currentAdmins = User::where('role', 'admin')->count();
         $currentTotal = $currentUsers + $currentAdmins;
-
         // 🚫 Check role restrictions based on license
         if ($request->role === 'admin' && $currentAdmins >= $allowedAdmins) {
             return back()->withErrors([
@@ -108,8 +105,7 @@ class AdminUtilisateurController extends Controller implements HasMiddleware
             'password' => bcrypt($request->password),
             'role'     => $request->role,
         ]);
-
-        return redirect()->route('super_admin.users.index')
+        return redirect()->route(userRoute('users.index'))
             ->with('success', __('admin.user.success.created'));
     }
 
@@ -147,14 +143,16 @@ class AdminUtilisateurController extends Controller implements HasMiddleware
 
         $user->update($validated);
 
-        return redirect()->route('super_admin.users.index')
+        return redirect()->route(userRoute('users.index'))
             ->with('success', __('admin.user.success.updated'));
     }
 
     public function destroy(User $user)
     {
+
         $user->delete();
-        return redirect()->route('super_admin.users.index')
+
+        return redirect()->route(userRoute('users.index'))
             ->with('success', __('admin.user.success.deleted'))
             ->with('deleted', true);
     }

@@ -14,16 +14,16 @@ return [
     'edit' => 'Modifier',
     'delete' => 'Supprimer',
     'delete_confirm' => 'Supprimer cette commande ?',
-    'no_invoice' => 'Aucune facture trouvée.',
+    'no_invoice' => 'Aucune commande trouvée.',
 
     'messages' => [
         'created' => 'Commande enregistrée avec succès !',
-        'updated' => 'Facture mise à jour avec succès !',
-        'deleted' => 'Facture supprimée avec succès !',
+        'updated' => 'Commande mise à jour avec succès !',
+        'deleted' => 'Commande supprimée avec succès !',
     ],
     'errors' => [
         'duplicate_reference' => 'Cette référence de commande existe déjà.',
-        'not_found' => 'Facture introuvable.',
+        'not_found' => 'Commande introuvable.',
     ],
     'validation' => [
         'reference_commande_required' => 'La référence de commande est obligatoire.',
@@ -34,8 +34,8 @@ return [
         'file_max' => 'La taille du fichier ne doit pas dépasser 5 Mo.',
     ],
     'invoice_create' => [
-        'title' => 'Créer une facture',
-        'page_title' => 'Nouvelle facture',
+        'title' => 'Créer une commande',
+        'page_title' => 'Nouvelle commande',
 
         'user_label' => 'Utilisateur',
         'choose_user' => '-- Choisir un utilisateur --',
@@ -43,8 +43,8 @@ return [
         'status_label' => 'Statut',
         'status' => [
             'pending' => 'En attente',
-            'approved' => 'Approuvé',
-            'rejected' => 'Rejeté',
+            'approved' => 'Approuvée',
+            'rejected' => 'Rejetée',
         ],
 
         'upload_label' => 'Uploader un fichier (Image ou PDF)',
@@ -52,8 +52,8 @@ return [
         'save' => 'Enregistrer',
     ],
     'editt' => [
-        'page_title' => 'Modifier une facture',
-        'heading' => 'Modifier la facture',
+        'page_title' => 'Modifier une commande',
+        'heading' => 'Modifier la commande',
         'user' => 'Utilisateur',
         'reference' => 'Référence Commande',
         'date' => 'Date Commande',
@@ -71,13 +71,13 @@ return [
 
     'status' => [
         'pending' => 'En attente',
-        'approved' => 'Approuvé',
-        'rejected' => 'Rejeté',
+        'approved' => 'Approuvée',
+        'rejected' => 'Rejetée',
     ],
     'index' => [
-        'title' => 'Factures',
-        'page_title' => 'Tableau de bord des factures',
-        'heading' => '📄 Factures',
+        'title' => 'Commandes',
+        'page_title' => 'Tableau de bord des commandes',
+        'heading' => '📄 Commandes',
         'back' => 'Retour',
         'add_auto' => 'Ajouter automatiquement (par image ou fichier)',
         'reference' => 'Référence',
@@ -90,14 +90,14 @@ return [
         'edit' => 'Modifier',
         'delete' => 'Supprimer',
         'confirm_delete' => 'Supprimer cette commande ?',
-        'empty' => 'Aucune facture trouvée.',
+        'empty' => 'Aucune commande trouvée.',
         'total' => 'Total',
     ],
     "show" => [
         'title' => 'Bon de commande #:id',
         'page_title' => 'Bon de commande #:id',
         'heading' => 'Détails du bon de commande #:id',
-        'details_title' => 'Détails de la facture',
+        'details_title' => 'Détails de la commande',
         'view_file' => 'Voir le fichier',
 
         'fields' => [
@@ -117,8 +117,8 @@ return [
             'file' => 'Fichier associé',
         ],
         'status' => [
-            'approuvé' => 'Approuvé',
-            'rejeté' => 'Rejeté',
+            'approuvé' => 'Approuvée',
+            'rejeté' => 'Rejetée',
             'en_attente' => 'En attente',
         ],
         'actions' => [
@@ -131,7 +131,7 @@ return [
         ],
     ],
     'confirm' => [
-        'page_title' => 'Confirmer les données de la facture',
+        'page_title' => 'Confirmer les données de la commande',
         'heading' => 'Veuillez vérifier toutes les informations avant d\'enregistrer',
         'reference' => 'Référence de commande',
         'date' => 'Date de commande',
@@ -166,6 +166,4 @@ return [
             'confirm_save' => 'Confirmer et enregistrer',
         ],
     ],
-
-
 ];
