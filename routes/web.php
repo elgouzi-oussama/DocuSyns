@@ -98,7 +98,7 @@ Route::middleware(['locale', 'license.check'])->group(function () {
             // Invoice routes 
             Route::resource('invoices', AdminInvoiceController::class);
             Route::post('/invoices/confirm', [AdminInvoiceController::class, 'confirm'])->name('invoices.confirm');
-            Route::post('/invoices/{invoice}', [AdminInvoiceController::class, 'show'])->name('invoices.show');
+            Route::get('/invoices/{invoice}', [AdminInvoiceController::class, 'show'])->name('invoices.show');
 
 
             // Extra routes for approve / reject
@@ -127,7 +127,7 @@ Route::middleware(['locale', 'license.check'])->group(function () {
         // Invoice routes
         Route::resource('invoices', AdminInvoiceController::class);
         Route::post('/invoices/confirm', [AdminInvoiceController::class, 'confirm'])->name('invoices.confirm');
-        Route::post('/invoices/{invoice}', [AdminInvoiceController::class, 'show'])->name('invoices.show');
+        Route::get('/invoices/{invoice}', [AdminInvoiceController::class, 'show'])->name('invoices.show');
 
         // Extra routes for approve / reject
         Route::post('/invoices/{id}/approve', [AdminInvoiceController::class, 'approve'])->name('invoices.approve');
