@@ -24,18 +24,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-        if ($this->app->runningInConsole()) {
-            return;
-        }
-        if (!Schema::hasTable('licenses')) {
+        // Prevent errors BEFORE migrations run
+        if (! app()->runningInConsole() || (app()->runningInConsole() && $this->isMigrating())) {
             return;
         }
 
+        // Run this code ONLY if the table exists
         if (Schema::hasTable('licenses')) {
             $serverId = SystemHelper::getServerId();
             $license = License::first();
+
             if (! $license) {
-                $license = License::create([
+                License::create([
                     'server_id' => $serverId,
                     'auasae_'   => Carbon::now(),
                 ]);
@@ -44,5 +44,15 @@ class AppServiceProvider extends ServiceProvider
 
 
         Schema::defaultStringLength(191);
+    }
+
+
+
+
+
+    private function isMigrating()
+    {
+        $argv = $_SERVER['argv'] ?? [];
+        return in_array('migrate', $argv) || in_array('migrate:fresh', $argv);
     }
 }
