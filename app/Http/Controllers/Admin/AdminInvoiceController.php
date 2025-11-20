@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\LicensesType;
 use App\Services\InvoiceParserForArticles;
 use App\Services\InvoiceParserService;
 use Smalot\PdfParser\Parser;
@@ -36,8 +37,6 @@ class AdminInvoiceController extends Controller implements HasMiddleware
     public function index()
     {
         $invoices = Invoice::latest()->paginate(10);
-
-
         return view('admin.invoices.index', compact('invoices'));
     }
     /**

@@ -16,8 +16,8 @@ class License extends Model
 
     ];
     protected $casts = [
-        'auasae_' => 'encrypted',      // Auto-decrypt on retrieval
-        'akaeay_' => 'encrypted', // If it's JSON
+        'auasae_' => 'encrypted',
+        'akaeay_' => 'encrypted',
     ];
 
 

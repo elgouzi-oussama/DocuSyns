@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\LicensesType;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Crypt;
 
 class LicenseTypeSeeder extends Seeder
 {
@@ -21,7 +20,7 @@ class LicenseTypeSeeder extends Seeder
                     'admins' => 1,
                     'storage' => '1GB',
                 ]),
-                'akaeay_' => Crypt::encryptString('Grade C'),
+                'akaeay_' => 'Grade C',
             ],
             [
                 '_name' => 'Pro',
@@ -30,7 +29,7 @@ class LicenseTypeSeeder extends Seeder
                     'admins' => 2,
                     'storage' => '5GB',
                 ]),
-                'akaeay_' => Crypt::encryptString('Grade B'),
+                'akaeay_' => 'Grade B',
             ],
             [
                 '_name' => 'Enterprise',
@@ -39,7 +38,7 @@ class LicenseTypeSeeder extends Seeder
                     'admins' => 3,
                     'storage' => '10GB',
                 ]),
-                'akaeay_' => Crypt::encryptString('Grade A'),
+                'akaeay_' => 'Grade A',
             ],
         ];
 

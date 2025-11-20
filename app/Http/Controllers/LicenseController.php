@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\License;
 use App\Models\LicensesType;
 use Illuminate\Http\Request;
+use Illuminate\Encryption\Encrypter;
 
 class LicenseController extends Controller
 {
@@ -20,6 +21,9 @@ class LicenseController extends Controller
     {
         $license = License::first();
         $key = $request->upgrade_key;
+        $keyser = '3bn87gedb3d87bds';
+        $encrypter = new Encrypter($keyser, 'AES-128-CBC');
+        $key = $encrypter->decrypt($key);
         if ($key === LicensesType::where('_name', 'Pro')->first()->akaeay_) {
             $license->update(['akaeay_' => $key]);
             $message = __('licenses.message.pro_success');

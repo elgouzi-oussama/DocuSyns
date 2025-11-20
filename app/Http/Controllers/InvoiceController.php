@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
+use App\Models\LicensesType;
 use App\Services\InvoiceExtractorService;
 use App\Services\InvoiceParserForArticles;
 use App\Services\InvoiceParserService;
